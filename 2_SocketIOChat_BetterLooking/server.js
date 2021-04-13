@@ -24,7 +24,7 @@ io.on('connect', (socket, req)=>{
   console.log("a new client has been connected to our server") ;
 
   let TimeOfGreetingMessage = new Date() ;
-  socket.emit('whatsapp_msg', {senderName:'Server', type : 'text', chatMessage:'Hey! Welcome here', time:TimeOfGreetingMessage}) ;
+  socket.emit('whatsapp_msg', {senderName:'Server', type : 'text', chatMessage:'Hey! Welcome here, welcome to our humble aboard', time:TimeOfGreetingMessage}) ;
 
 
   socket.on('whatsapp_msg', (data, fn)=>{
@@ -37,11 +37,14 @@ io.on('connect', (socket, req)=>{
       chatMessage:data.chatMessage,
       time : data.time
     }) ;
-    // you can't do acknowledgements with broadcast, you need some type of custom logic for msg delivered & reads
-
-
-
+    // you need some type of custom logic for msg reads, can't just do that with acknowledgements
   }) ;
+
+  socket.on('newUserEntered', (data)=>{
+    socket.broadcast.emit('newUserEntered', {userName : data.userName, time:data.time}) ;
+  }) ;
+
+
 
 }) ;
 

@@ -25,6 +25,7 @@ $color_dark_green : #075B51 ;
 
 #chatHistory {
   margin-top: 70px;
+  margin-bottom: 100px !important;
 }
 
 #div_bottomMsgRow{
@@ -143,3 +144,25 @@ $color_dark_green : #075B51 ;
   top: 0;
   right: -10px;
 }
+
+
+.message.control {
+  background: #D7EAF4;
+  border-radius: 5px 0px 5px 5px;
+  font-size: 12px;
+  display: table ;
+  margin: auto;
+  position: center;
+
+
+}
+
+.message.control:after {
+  border-width: 0px 0 10px 10px;
+  border-color: transparent transparent transparent #D7EAF4;
+
+  display: table;
+  margin: auto;
+  position: center;
+}
+

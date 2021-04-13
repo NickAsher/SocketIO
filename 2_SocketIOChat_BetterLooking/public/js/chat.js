@@ -3,6 +3,8 @@ let myUserName = localStorage.getItem('senderName') ;
 
 socket.on('connect', ()=>{
   console.log(socket.id) ;
+  let sentTimestamp = new Date().getTime() ;
+  socket.emit('newUserEntered', {userName : myUserName, time:sentTimestamp}) ;
 }) ;
 
 socket.on('whatsapp_msg', (data)=>{
@@ -64,4 +66,22 @@ $('#chatMessageSend').click(()=>{
 
 }) ;
 
+
+// this event is triggered everytime a new user enters the chat.
+// this is not triggered for us, when we, ourselves enter the chat
+socket.on('newUserEntered', (data)=> {
+  let newUserName = data.userName;
+
+  $('#chatHistory').append(
+    `<div class="message control">
+        ${newUserName} has entered the chat
+      </div>`
+  ) ;
+  // you can't have disconnect messages without implementing some custom logic
+  // basically you would have to track when the client leaves, you emit a message
+  // to do this you basically have to make a map of socket-id's and their names
+  // and see which socket id is disconnected from the server
+
+
+}) ;
 
