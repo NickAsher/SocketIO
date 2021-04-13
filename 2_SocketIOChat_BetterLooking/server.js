@@ -31,7 +31,7 @@ io.on('connect', (socket, req)=>{
 
     fn(true) ; //telling the client that we got the message so that it can do first tick
 
-    socket.broadcast.emit('whatsapp_msg', {
+    io.emit('whatsapp_msg', {
       senderName : data.senderName,
       type:'text',
       chatMessage:data.chatMessage,

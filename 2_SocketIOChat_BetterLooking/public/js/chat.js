@@ -8,16 +8,30 @@ socket.on('connect', ()=>{
 socket.on('whatsapp_msg', (data)=>{
   let senderName = data.senderName ;
   let chatMessage = data.chatMessage ;
-  let messageTime = (new Date(data.time)).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) ;
+  let sentTimestamp = data.time ;
+  let messageTime = (new Date(sentTimestamp)).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) ;
 
-  $('#chatHistory').append(
-`<div class="message received">
-    <b>${senderName} </b> <br> ${chatMessage}
-    <span class="metadata">
-      <span class="time">${messageTime}</span>
-    </span>
-  </div>`) ;
 
+
+  if(senderName == myUserName){
+    if(document.querySelector(`#myMsg-${sentTimestamp}`) !== null){
+      // this message is the one, sent by this client
+      // so we don't append anything, but rather just show the 2 tick (i.e. message delivered)
+      document.querySelector(`#myMsg-${sentTimestamp} #readReceipt`).innerHTML = `<i class="fas fa-check-double fa-xs" style="color: grey"></i>` ;
+
+    }
+
+  } else {
+    $('#chatHistory').append(
+      `<div class="message received">
+            <b>${senderName} </b> <br> ${chatMessage}
+        <span class="metadata">
+            <span class="time">${messageTime}</span>
+        </span>
+      </div>`
+    ) ;
+
+  }
 }) ;
 
 
@@ -48,11 +62,6 @@ $('#chatMessageSend').click(()=>{
 
     }) ;
 
-
-
 }) ;
 
-function makeClickAppear(div_Id){
 
-
-}
