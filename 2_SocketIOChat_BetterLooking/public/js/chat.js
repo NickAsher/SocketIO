@@ -29,12 +29,30 @@ $('#chatMessageSend').click(()=>{
   let messageTime = new Date(sentTimestamp).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) ;
 
   $('#chatHistory').append(
-    `<div class="message sent">
+    `<div id="myMsg-${sentTimestamp}" class="message sent">
     ${chatMessage}
     <span class="metadata">
       <span class="time">${messageTime}</span>
+      <span id="readReceipt" class="tick"><i class="far fa-clock fa-xs" style="color: grey"></i> </span> 
     </span>
   </div>`) ;
 
-  socket.emit('whatsapp_msg', {senderName : myUserName, type: 'text', chatMessage : chatMessage, time:sentTimestamp}) ;
+  socket.emit('whatsapp_msg',
+    {senderName : myUserName, type: 'text', chatMessage : chatMessage, time:sentTimestamp},
+    (confirmation)=>{
+    // this is confirmation that the message was received by the server
+      if(confirmation == true){
+        // Adding a tick icon for a sent message
+        document.querySelector(`#myMsg-${sentTimestamp} #readReceipt`).innerHTML = `<i class="fas fa-check fa-xs" style="color: grey"></i>` ;
+      }
+
+    }) ;
+
+
+
 }) ;
+
+function makeClickAppear(div_Id){
+
+
+}

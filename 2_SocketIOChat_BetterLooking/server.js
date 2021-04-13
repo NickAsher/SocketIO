@@ -27,7 +27,9 @@ io.on('connect', (socket, req)=>{
   socket.emit('whatsapp_msg', {senderName:'Server', type : 'text', chatMessage:'Hey! Welcome here', time:TimeOfGreetingMessage}) ;
 
 
-  socket.on('whatsapp_msg', (data)=>{
+  socket.on('whatsapp_msg', (data, fn)=>{
+
+    fn(true) ; //telling the client that we got the message so that it can do first tick
 
     socket.broadcast.emit('whatsapp_msg', {
       senderName : data.senderName,
@@ -35,6 +37,10 @@ io.on('connect', (socket, req)=>{
       chatMessage:data.chatMessage,
       time : data.time
     }) ;
+    // you can't do acknowledgements with broadcast, you need some type of custom logic for msg delivered & reads
+
+
+
   }) ;
 
 }) ;
