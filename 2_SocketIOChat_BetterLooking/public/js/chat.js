@@ -13,17 +13,14 @@ socket.on('whatsapp_msg', (data)=>{
   let sentTimestamp = data.time ;
   let messageTime = (new Date(sentTimestamp)).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) ;
 
-
-
+  // if message is sent by client, show the double tick(indicating message is delivered)
   if(senderName == myUserName){
     if(document.querySelector(`#myMsg-${sentTimestamp}`) !== null){
-      // this message is the one, sent by this client
-      // so we don't append anything, but rather just show the 2 tick (i.e. message delivered)
       document.querySelector(`#myMsg-${sentTimestamp} #readReceipt`).innerHTML = `<i class="fas fa-check-double fa-xs" style="color: grey"></i>` ;
-
     }
-
-  } else {
+  }
+  // else if message is sent by other people, simply show the message in chatHistory
+  else {
     $('#chatHistory').append(
       `<div class="message received">
             <b>${senderName} </b> <br> ${chatMessage}
@@ -32,18 +29,18 @@ socket.on('whatsapp_msg', (data)=>{
         </span>
       </div>`
     ) ;
-
   }
 }) ;
 
 
-
+// setting the onClick listener when you press enter
 $('#chatMessageSend').click(()=>{
   let chatMessage = $('#chatMessageValue').val() ;
   $('#chatMessageValue').val('') ; // clearing the text field
   let sentTimestamp = new Date().getTime() ;
   let messageTime = new Date(sentTimestamp).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) ;
 
+  // firstly we append the message to chatHistory
   $('#chatHistory').append(
     `<div id="myMsg-${sentTimestamp}" class="message sent">
     ${chatMessage}
@@ -53,17 +50,16 @@ $('#chatMessageSend').click(()=>{
     </span>
   </div>`) ;
 
+  // Now we emit the message to the server, so that it can send it to other clients
   socket.emit('whatsapp_msg',
     {senderName : myUserName, type: 'text', chatMessage : chatMessage, time:sentTimestamp},
     (confirmation)=>{
-    // this is confirmation that the message was received by the server
+      // on Receiving acknowledgement from server that message was received,
+      // show Single-Tick icon indicating message sent
       if(confirmation == true){
-        // Adding a tick icon for a sent message
         document.querySelector(`#myMsg-${sentTimestamp} #readReceipt`).innerHTML = `<i class="fas fa-check fa-xs" style="color: grey"></i>` ;
       }
-
     }) ;
-
 }) ;
 
 
@@ -78,9 +74,10 @@ socket.on('newUserEntered', (data)=> {
       </div>`
   ) ;
   // you can't have disconnect messages without implementing some custom logic
-  // basically you would have to track when the client leaves, you emit a message
-  // to do this you basically have to make a map of socket-id's and their names
-  // and see which socket id is disconnected from the server
+  // because there is no event like socket.on('disconnect') on client side. This event is only on server side.
+  // To Implement Disconnect messages, you have to track when the client leaves
+  // using a map of socket-id's and client names, and see which socket id is disconnected from the server
+  // and then send a disconnect emit from the server
 
 
 }) ;

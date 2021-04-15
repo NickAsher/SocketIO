@@ -1,0 +1,29 @@
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"></head>
+<body>
+    <br><br><br><br><br><br><br>
+
+    <div class="form-group row">
+        <label for="userName" class="offset-md-3 col-2 col-form-label">Your Name:</label>
+        <div class="col-md-4">
+            <input name = 'userName' id="userName" class="col-md-4 form-control" type="text"  >
+        </div>
+    </div>
+
+    <br>
+    <center>
+        <input id="btn_EnterChat" type="submit" class=" center col-4 btn btn-success" value="Enter Chat">
+    </center>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" ></script>
+<script>
+    $('#btn_EnterChat').click(()=>{
+      let myName = $('#userName').val() ;
+      localStorage.setItem('senderName', myName) ;
+      window.location.href = 'slack.html';
+    }) ;
+</script>
+</body>
