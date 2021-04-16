@@ -3,20 +3,20 @@ body {
   color: white;
 }
 
-.namespaces {
+.namespace-list {
   background-color: #282c34;
   min-height: 100vh;
   color: #ABB2BF;
   text-align: center;
 }
-.namespaces img {
+.namespace-list img {
   margin-top: 10px;
   background-color: #ABB2BF;
   border-radius: 10px;
   cursor: pointer;
   width: 45px;
 }
-.namespaces p {
+.namespace-list p {
   font-size: 11px;
 }
 

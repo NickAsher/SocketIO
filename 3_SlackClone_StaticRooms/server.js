@@ -33,11 +33,50 @@ io.on('connect', (socket, req)=>{
 
 }) ;
 
+
+
 // we loop through each of the namespaces, looking for a connection
 arrayOfNamespaces.forEach((namespace)=>{
 
-  io.of(namespace.endpoint).on('connect', (socket, req)=>{
-    console.log(`${socket.id} has joined ${namespace.endpoint}`) ;
+
+  io.of(namespace.endpoint).on('connect', (socketNS, req)=>{
+    console.log(socketNS.handshake) ;
+    console.log(`${socketNS.id} has joined ${namespace.endpoint}  `) ;
+    // after connecting to a namespace, we send that client, the list of rooms in that namespace
+    socketNS.emit('roomData', namespace.arrayOfRooms) ;
+
+
+    socketNS.on('joinRoom', (roomData)=>{
+
+      // before we join a room, we must leave previous room
+      // socketNs.rooms   is a set where 0th item is socketId and next items are currently joined rooms
+      // but we can't jsut access Set items like array
+      let previousRoomTitle = Array.from(socketNS.rooms)[1] ;
+      socketNS.leave(previousRoomTitle) ;
+      socketNS.join(roomData.roomTitle) ;
+      console.log(socketNS.id + 'has joined the room' + roomData.roomTitle) ;
+    }) ;
+
+
+    socketNS.on('textMessageToServer', (textMessageData)=>{
+
+      let messageData = textMessageData.message ;
+      let time = new Date(textMessageData.timestamp).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
+      let senderName = socketNS.handshake.query.userName ;
+
+      let currentlyJoinedRoomTitle = Array.from(socketNS.rooms)[1] ;
+      io.of(namespace.endpoint).to(currentlyJoinedRoomTitle).emit('textMessageFromServer', {
+        message : messageData,
+        time : time,
+        senderName : senderName
+      }) ;
+
+    }) ;
+
+
+
+
+
   }) ;
 
 
