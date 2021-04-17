@@ -1,0 +1,107 @@
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"  />
+    <!--<link rel="stylesheet" href="css/bootstrap.min.css" >-->
+    <link rel="stylesheet" href="css/chat.css" >
+</head>
+
+<body background="./images/walllpaper.png">
+<div class="container-fluid" >
+    <div class="row" style="height: 100%">
+        <div class="col-3 no-margin-padding" style="background: white">
+
+            <div id="div_MyProfile" class="row" >
+                <img  src="./images/icon.png" class="rounded-circle"  >
+                <!--<h6> &nbsp;Rafique </h6>-->
+                <button id="btn_AddNewChatroom" class="text-right float-right">
+                    <i class="fas fa-comment-alt fa-lg"></i>
+                </button>
+            </div>
+
+            <hr style="margin-top: 60px">
+            <div class="chatroom row">
+                <img  src="./images/icon.png" class="rounded-circle"  >
+                <div>
+                    <h5> &nbsp; SocketIO Open Chat Group</h5>
+                    <h6> The place for open discussion</h6>
+                </div>
+            </div>
+            <hr>
+
+            <div class="chatroom row">
+                <img  src="./images/icon.png" class="rounded-circle"  >
+                <div>
+                    <h5> &nbsp; Mayank</h5>
+                    <h6> I am available to talk</h6>
+                </div>
+
+            </div>
+            <hr>
+
+            <div class="chatroom row">
+                <img  src="./images/icon.png" class="rounded-circle"  >
+                <div>
+                    <h5> &nbsp; Swarit </h5>
+                    <h6> Life is super fun </h6>
+                </div>
+
+            </div>
+            <hr>
+
+            <div class="chatroom row">
+                <img  src="./images/icon.png" class="rounded-circle"  >
+                <div>
+                    <h5> &nbsp; Prabhneet </h5>
+                    <h6> Just enjoying Life</h6>
+                </div>
+            </div>
+            <hr>
+
+
+        </div>
+        <div class="col-9 no-margin-padding  ">
+            <div class="container-fluid"   >
+
+                <div id="div_TopRow" class="row" >
+                    <img id="img_profilePic" src="./images/icon.png" class="rounded-circle"  >
+                    <h6> &nbsp; SocketIO Open Chat Group </h6>
+                </div>
+
+                <div  class="row " style="height: 100%">
+                    <p id="chatHistory" style="padding: 40px; padding-top: 60px">
+
+                    </p>
+                </div>
+
+                <div id="div_bottomMsgRow" class="row" >
+                    <button id="btn_showSmileyKeyboard" class="col-sm-1 col-md-1">
+                        <i class="far fa-grin fa-lg"></i>
+                    </button>
+                    <button id="btn_showAttachmentsSheet" class="col-sm-1 col-md-1">
+                        <i class="fas fa-paperclip fa-lg"></i>
+                    </button>
+                    <div class="col-sm-9 col-md-9">
+                        <input id="chatMessageValue" class="form-control form-rounded" placeholder="Type a message">
+                    </div>
+                    <button id="chatMessageSend" type="submit" class="col-sm-1 col-md-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" ><path fill="currentColor" d="M1.101 21.757L23.8 12.028 1.101 2.3l.011 7.912 13.623 1.816-13.623 1.817-.011 7.912z"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" ></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js" ></script>
+
+<!--<script src="js/jquery.min.js"></script>-->
+<!--<script src="js/bootstrap.bundle.min.js"></script>-->
+<!--<script src="js/socket.io.min.js"></script>-->
+
+<script src="js/chat.js"></script>
+</body>

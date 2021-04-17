@@ -1,6 +1,8 @@
 const myUserName = localStorage.getItem('senderName') ;
 
 const URL_ServerMainNamespace = 'http://localhost:4001' ;
+// when reconnecting to a namespace, the query data i.e. userName will be lost
+// because reconnecting to same namespace, does not use multiplexing.
 let socket = io(URL_ServerMainNamespace + '/', {
   query : {
     userName : myUserName

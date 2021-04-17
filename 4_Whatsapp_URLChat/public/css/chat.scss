@@ -1,0 +1,266 @@
+$color_dark_green : #075B51 ;
+
+.form-rounded {
+  border-radius: 50rem;
+}
+
+.no-margin-padding{
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+#div_MyProfile{
+  background: #ededed;
+  min-height: 60px;
+  position: absolute;
+  width: 100%;
+  top: 0px;
+  padding: 0px;
+  margin: 0px;
+
+  h6{
+    margin-top: 15px;
+    color: black;
+    //font-weight: bold;
+    margin-left: 10px;
+  }
+
+  img {
+    width: 40px;
+    height: 40px;
+    margin-left: 25px;
+    margin-top: 5px;
+  }
+
+  button{
+    padding: 20px 20px;
+    //padding-right: 20px;
+    outline:none;
+    border-style: none;
+    background: #EDEDED;
+    color: $color_dark_green;
+    position: absolute;
+    right: 20px;
+    //display: inline;
+    //float: right;
+    //text-align: right;
+    //right: 30px;
+  }
+
+}
+
+.chatroom {
+  background-color: #fff ;
+  padding: 15px 0px;
+  margin: 0;
+
+  img {
+    width: 40px;
+    height: 40px;
+    margin: 5px 0px 5px 20px; // clockwise : top right down left
+  }
+
+  h5{
+    font-size: 14px;
+    margin-top: 8px;
+    margin-left: 4px;
+    color: black;
+    font-weight: bold;
+  }
+
+  h6{
+    font-size: 12px;
+    margin-left: 10px;
+    color: black;
+    margin-top: -4px;
+  }
+
+  &:hover {
+    background-color: #E9EAEC;
+    cursor: pointer;
+  }
+
+  &.active {
+    background-color: #E9EAEC;
+    cursor: pointer;
+  }
+}
+
+hr{
+  margin: 0 ;
+}
+
+
+#div_TopRow {
+  background: $color_dark_green;
+  min-height: 60px;
+  position: absolute;
+  width: 100%;
+  top: 0px;
+
+  h6{
+    margin-top: 20px;
+    color: white;
+    font-weight: bold;
+  }
+
+  img{
+    width: 50px;
+    height: 50px;
+    margin-left: 50px;
+    margin-top: 5px;
+  }
+}
+
+
+#chatHistory {
+  //margin-top: 70px;
+  //margin-bottom: 100px !important;
+  width: 100%;
+  height: 100%;
+}
+
+#div_bottomMsgRow{
+  background: #EDEDED;
+  //bottom: 0px;
+  padding: 10px;
+  padding-right: 10px;
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+
+}
+
+
+
+#chatMessageValue{
+  position: relative;
+  z-index: 1;
+  min-height: 20px;
+  max-height: 100px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--compose-primary);
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  outline: none;
+}
+
+
+
+
+#chatMessageSend, #btn_showAttachmentsSheet, #btn_showSmileyKeyboard {
+  padding: 0 ;
+  padding-right: 10px;
+  outline:none;
+  border-style: none;
+  background: #EDEDED;
+  color: $color_dark_green;
+
+}
+
+
+
+
+/**  Style of the message sent and received boxes  */
+
+.message {
+  color: #000;
+  clear: both;
+  line-height: 18px;
+  font-size: 15px;
+  padding: 8px;
+  position: relative;
+  margin: 8px 0;
+  max-width: 85%;
+  word-wrap: break-word;
+  z-index: -1;
+}
+
+.message:after {
+  position: absolute;
+  content: "";
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+.metadata {
+  display: inline-block;
+  float: right;
+  padding: 0 0 0 7px;
+  position: relative;
+  bottom: -4px;
+}
+
+.metadata .time {
+  color: rgba(0, 0, 0, .45);
+  font-size: 11px;
+  display: inline-block;
+}
+
+.metadata .tick {
+  color: rgba(0, 0, 0, .45);
+  font-size: 11px;
+  display: inline-block;
+}
+
+.message:first-child {
+  margin: 16px 0 8px;
+}
+
+.message.received {
+  background: #fff;
+  border-radius: 0px 5px 5px 5px;
+  float: left;
+}
+
+.message.received .metadata {
+  padding: 0 0 0 16px;
+}
+
+.message.received:after {
+  border-width: 0px 10px 10px 0;
+  border-color: transparent #fff transparent transparent;
+  top: 0;
+  left: -10px;
+}
+
+.message.sent {
+  background: #e1ffc7;
+  border-radius: 5px 0px 5px 5px;
+  float: right;
+}
+
+.message.sent:after {
+  border-width: 0px 0 10px 10px;
+  border-color: transparent transparent transparent #e1ffc7;
+  top: 0;
+  right: -10px;
+}
+
+
+.message.control {
+  background: #D7EAF4;
+  border-radius: 5px 0px 5px 5px;
+  font-size: 12px;
+  display: table ;
+  margin: auto;
+  position: center;
+
+
+}
+
+.message.control:after {
+  border-width: 0px 0 10px 10px;
+  border-color: transparent transparent transparent #D7EAF4;
+
+  display: table;
+  margin: auto;
+  position: center;
+}
+
