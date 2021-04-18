@@ -1,9 +1,8 @@
 class Chatroom{
 
-  constructor(name, status, img, path){
+  constructor(name, status, path){
     this.name = name ;
     this.status = status ;
-    this.img = img ;
     this.path = path ;
     this.currentUsers = [] ;
     // this.messageHistory = [] ;  // for future use, for keeping backup
@@ -17,10 +16,11 @@ class Chatroom{
     return {
       name : this.name,
       status : this.status,
-      img :this.img,
       path : this.path
     } ;
   }
 
+
+
 }
-export {Chatroom}
+module.exports = Chatroom ;

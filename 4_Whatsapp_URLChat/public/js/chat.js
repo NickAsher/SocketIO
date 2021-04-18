@@ -34,36 +34,7 @@ socket.on('whatsapp_msg', (data)=>{
 }) ;
 
 
-// setting the onClick listener when you press enter
-$('#chatMessageSend').click(()=>{
-  let chatMessage = $('#chatMessageValue').val() ;
-  $('#chatMessageValue').val('') ; // clearing the text field
-  let sentTimestamp = new Date().getTime() ;
-  let messageTime = new Date(sentTimestamp).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) ;
 
-  // firstly we append the message to chatHistory
-  $('#chatHistory').append(
-    `<div id="myMsg-${sentTimestamp}" class="message sent">
-    ${chatMessage}
-    <span class="metadata">
-      <span class="time">${messageTime}</span>
-      <span id="readReceipt" class="tick"><i class="far fa-clock fa-xs" style="color: grey"></i> </span> 
-    </span>
-  </div>`) ;
-
-
-
-  // Now we emit the message to the server, so that it can send it to other clients
-  socket.emit('whatsapp_msg',
-    {senderName : myUserName, type: 'text', chatMessage : chatMessage, time:sentTimestamp},
-    (confirmation)=>{
-      // on Receiving acknowledgement from server that message was received,
-      // show Single-Tick icon indicating message sent
-      if(confirmation == true){
-        document.querySelector(`#myMsg-${sentTimestamp} #readReceipt`).innerHTML = `<i class="fas fa-check fa-xs" style="color: grey"></i>` ;
-      }
-    }) ;
-}) ;
 
 
 // this event is triggered everytime a new user enters the chat.
@@ -84,4 +55,67 @@ socket.on('newUserEntered', (data)=> {
 
 
 }) ;
+
+
+function emitToServer_NewChatroomAdded(newChatroom, callbackFunction){
+
+  socket.emit('newChatroomAdded', {
+    chatroom: newChatroom.toJSON(),
+    timestamp : (new Date()).getTime(),
+    sender : myUserName
+  }, (serverCallback)=>{
+    if(serverCallback == true){
+      callbackFunction() ;
+    }
+  }) ;
+}
+
+function emitToServer_JoinChatroom(chatroomPath, newUserName, callbackFunction) {
+  socket.emit('joinChatroom', {
+    chatroomPath: chatroomPath,
+    newUserName : newUserName
+  }, (serverCallback)=>{
+    if(serverCallback == true){
+      callbackFunction() ;
+    }
+  }) ;
+}
+
+socket.on('joinChatroom', (data)=>{
+  console.log("succesfully joined chatroom") ;
+  console.log(data.chatroom) ;
+
+  addChatRoomToLocalStorage(data.chatroom) ;
+
+}) ;
+
+
+socket.on('newUser_in_Chatroom', (data)=> {
+  let newUserName = data.newUserName;
+
+  $('#chatHistory').append(
+    `<div class="message control">
+        ${newUserName} has entered the chat
+      </div>`
+  );
+
+
+
+}) ;
+
+
+function emitToServer_Message(message, callbackFunction){
+
+  socket.emit('msg_in_Chatroom', {
+    message : message,
+    sender : myUserName
+  }, (serverCallback)=>{
+    if(serverCallback == true){
+      callbackFunction() ;
+    }
+  }) ;
+}
+
+
+
 

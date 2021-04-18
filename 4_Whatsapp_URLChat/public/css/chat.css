@@ -43,6 +43,7 @@
   background-color: #fff;
   padding: 15px 0px;
   margin: 0;
+  z-index: 10;
 }
 .chatroom img {
   width: 40px;

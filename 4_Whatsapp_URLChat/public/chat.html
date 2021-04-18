@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="css/chat.css" >
 </head>
 
-<body background="./images/walllpaper.png">
+<body background="./images/walllpaper.png" >
 <div class="container-fluid" >
     <div class="row" style="height: 100%">
         <div class="col-3 no-margin-padding bg-white">
@@ -20,43 +20,8 @@
             <hr style="margin-top: 60px">
 
             <div id="div_ListOfChatrooms">
-                <div class="chatroom row">
-                    <img  src="./images/icon.png" class="rounded-circle"  >
-                    <div>
-                        <h5> &nbsp; SocketIO Open Chat Group</h5>
-                        <h6> The place for open discussion</h6>
-                    </div>
-                </div>
-                <hr>
 
-                <div class="chatroom row">
-                    <img  src="./images/icon.png" class="rounded-circle"  >
-                    <div>
-                        <h5> &nbsp; Mayank</h5>
-                        <h6> I am available to talk</h6>
-                    </div>
 
-                </div>
-                <hr>
-
-                <div class="chatroom row">
-                    <img  src="./images/icon.png" class="rounded-circle"  >
-                    <div>
-                        <h5> &nbsp; Swarit </h5>
-                        <h6> Life is super fun </h6>
-                    </div>
-
-                </div>
-                <hr>
-
-                <div class="chatroom row">
-                    <img  src="./images/icon.png" class="rounded-circle"  >
-                    <div>
-                        <h5> &nbsp; Prabhneet </h5>
-                        <h6> Just enjoying Life</h6>
-                    </div>
-                </div>
-                <hr>
             </div>
 
 
@@ -152,10 +117,6 @@
                     <input id="input_ChatroomStatus" class="form-control" type="text">
                     <br>
 
-                    <label>Chatroom Image Link :</label>
-                    <input id="input_ChatroomImageLink" class="form-control" type="text">
-                    <br>
-
                     <label>Chatroom Path :</label>
                     <input id="input_ChatroomPath" class="form-control" type="text">
                     <br>
@@ -176,6 +137,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js" ></script>
 
-<script type="module" src="js/dom_manipulation.js" ></script>
+<script src="js/Chatroom.js" ></script>
+<script src="js/dom_manipulation.js" ></script>
 <script src="js/chat.js"></script>
 </body>
