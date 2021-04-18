@@ -3,8 +3,6 @@ let myUserName = localStorage.getItem('senderName') ;
 
 socket.on('connect', ()=>{
   console.log(socket.id) ;
-  let sentTimestamp = new Date().getTime() ;
-  socket.emit('newUserEntered', {userName : myUserName, time:sentTimestamp}) ;
 }) ;
 
 socket.on('whatsapp_msg', (data)=>{
@@ -39,14 +37,15 @@ socket.on('whatsapp_msg', (data)=>{
 
 // this event is triggered everytime a new user enters the chat.
 // this is not triggered for us, when we, ourselves enter the chat
-socket.on('newUserEntered', (data)=> {
-  let newUserName = data.userName;
-
-  $('#chatHistory').append(
-    `<div class="message control">
-        ${newUserName} has entered the chat
-      </div>`
-  ) ;
+// socket.on('newUserEntered', (data)=> {
+//   let newUserName = data.userName;
+//
+//   $('#chatHistory').append(
+//     `<div class="message control">
+//         ${newUserName} has entered the chat
+//       </div>`
+//   ) ;
+// }) ;
   // you can't have disconnect messages without implementing some custom logic
   // because there is no event like socket.on('disconnect') on client side. This event is only on server side.
   // To Implement Disconnect messages, you have to track when the client leaves
@@ -54,7 +53,7 @@ socket.on('newUserEntered', (data)=> {
   // and then send a disconnect emit from the server
 
 
-}) ;
+
 
 
 function emitToServer_NewChatroomAdded(newChatroom, callbackFunction){
@@ -109,13 +108,18 @@ function emitToServer_Message(message, callbackFunction){
 
   socket.emit('msg_in_Chatroom', {
     message : message,
-    sender : myUserName
+    sender : myUserName,
+    timestamp : (new Date()).getTime()
   }, (serverCallback)=>{
     if(serverCallback == true){
       callbackFunction() ;
     }
   }) ;
 }
+
+socket.on('msg_in_Chatroom', (data)=>{
+  showMessageInChatHistory(data.sender, data.message, data.timestamp) ;
+}) ;
 
 
 

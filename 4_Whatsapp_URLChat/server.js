@@ -101,12 +101,13 @@ io.on('connect', (socket, req)=>{
 
   socket.on('msg_in_Chatroom', (data, acknowledgement)=>{
     acknowledgement(true) ;
+    console.log("i have got the msg_in_Chatroom")
 
     let roomPath = socket.room ;
-    io.sockets.in(roomPath).emit('msg_in_chatroom', {
+    io.sockets.in(roomPath).emit('msg_in_Chatroom', {
       message :data.message,
       sender : data.sender,
-      timestamp : (new Date()).getTime()
+      timestamp : data.timestamp
     }) ;
   }) ;
 

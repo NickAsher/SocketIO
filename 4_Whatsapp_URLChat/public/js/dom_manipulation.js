@@ -99,10 +99,11 @@ $(document).on("click",".chatroom", (event)=>{
 
 // setting the onClick listener when you press enter
 $('#chatMessageSend').click(()=>{
+
   let chatMessage = $('#chatMessageValue').val() ;
   $('#chatMessageValue').val('') ; // clearing the text field
-  let sentTimestamp = new Date().getTime() ;
-  // let messageTime = new Date(sentTimestamp).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) ;
+
+  console.log("Send button is clicked with message => " + chatMessage) ;
 
   // // firstly we append the message to chatHistory
   // $('#chatHistory').append(
@@ -115,16 +116,36 @@ $('#chatMessageSend').click(()=>{
   // </div>`) ;
 
 
+  emitToServer_Message(chatMessage, ()=>{
+    // document.querySelector(`#myMsg-${sentTimestamp} #readReceipt`).innerHTML = `<i class="fas fa-check fa-xs" style="color: grey"></i>` ;
+  }) ;
 
-  // Now we emit the message to the server, so that it can send it to other clients
-  socket.emit('msg_in_Chatroom',
-    {sender : myUserName, message : chatMessage, time:sentTimestamp},
-    (confirmation)=>{
-      // on Receiving acknowledgement, show Single-Tick icon indicating message sent
-      if(confirmation == true){
-        // document.querySelector(`#myMsg-${sentTimestamp} #readReceipt`).innerHTML = `<i class="fas fa-check fa-xs" style="color: grey"></i>` ;
-      }
-    }) ;
+
+
+
 }) ;
+
+
+function showMessageInChatHistory(sender, message, timestamp){
+  let messageTime = (new Date(timestamp)).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) ;
+
+  // if message is sent by client, show the double tick(indicating message is delivered)
+  // if(sender == myUserName){
+  //   if(document.querySelector(`#myMsg-${timestamp}`) !== null){
+  //     document.querySelector(`#myMsg-${timestamp} #readReceipt`).innerHTML = `<i class="fas fa-check-double fa-xs" style="color: grey"></i>` ;
+  //   }
+  // }
+  // else if message is sent by other people, simply show the message in chatHistory
+  // else {
+    $('#chatHistory').append(
+      `<div class="message received">
+            <b>${sender} </b> <br> ${message}
+        <span class="metadata">
+            <span class="time">${messageTime}</span>
+        </span>
+      </div>`
+    ) ;
+  // }
+}
 
 
