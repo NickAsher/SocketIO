@@ -86,8 +86,22 @@ socket.on('joinChatroom', (data)=>{
 
   addChatRoomToLocalStorage(data.chatroom) ;
   updateListOfChatroom_in_DOM() ;
+  highlightJoinedChatroom(data.chatroom) ;
+
 
 }) ;
+
+
+function emitNewUserInChatroom(chatroomPath, senderName, DOMCallbackFunction){
+  socket.emit('newUser_in_Chatroom', {
+    chatroomPath : chatroomPath,
+    newUserName : senderName
+  }, (serverAcknowledgement)=>{
+    if(serverAcknowledgement == true){
+      DOMCallbackFunction() ;
+    }
+  }) ;
+}
 
 
 socket.on('newUser_in_Chatroom', (data)=> {

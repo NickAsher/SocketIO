@@ -7,28 +7,28 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
 
 $('#btn_AddNewChatroom').click(()=>{
+  //TODO create random links for chatrooms
   let chatroomName = document.querySelector('#input_ChatroomName').value ;
   let chatroomStatus = document.querySelector('#input_ChatroomStatus').value ;
   let chatroomPath = document.querySelector('#input_ChatroomPath').value ;
-
-
-  let newChatroom = new Chatroom(chatroomName, chatroomStatus, chatroomPath) ;
 
   //clear input fields
   document.querySelector('#input_ChatroomName').value = '' ;
   document.querySelector('#input_ChatroomStatus').value = '' ;
   document.querySelector('#input_ChatroomPath').value = '' ;
 
+  let newChatroom = new Chatroom(chatroomName, chatroomStatus, chatroomPath) ;
+
   emitToServer_NewChatroomAdded(newChatroom, ()=>{
     addChatRoomToLocalStorage(newChatroom.toJSON()) ;
     updateListOfChatroom_in_DOM() ;
+    highlightJoinedChatroom(chatroomPath) ;
   }) ;
 
 
 }) ;
 
-document.querySelector('#btn_JoinChatroom').addEventListener('click', (event)=>{
-  let element = event.target ;
+$('#btn_JoinChatroom').click(()=>{
   let chatroomPath = document.querySelector('#input_ChatroomLink').value ;
 
   document.querySelector('#input_ChatroomLink').value = '' ;
@@ -59,7 +59,7 @@ function updateListOfChatroom_in_DOM(){
   document.querySelector('#div_ListOfChatrooms').innerHTML = '' ;
   listOfChatrooms.forEach((chatroom)=>{
     document.querySelector('#div_ListOfChatrooms').innerHTML += `
-            <div class="chatroom row" path="${chatroom.path}">
+            <div id="room-${chatroom.path}" class="chatroom row" path="${chatroom.path}">
                 <img  src="https://picsum.photos/70/70" class="rounded-circle"  >
                 <div>
                     <h5> ${chatroom.name}</h5>
@@ -72,32 +72,50 @@ function updateListOfChatroom_in_DOM(){
 }
 
 
-// $('.chatroom').click((..))  does not work for dynamic elements
+// $('.chatroom').click((..))  does not work for dynamic elements, use
 // if you use arrow function in the callback of .on(), then $(this) will refer to the whole dom instead of element
 // use event.target to get the element
 $(document).on("click",".chatroom", (event)=>{
 
-  let element = event.target ; // $(this) only works if you don't use arrow function here
-  $('.chatroom').removeClass('active') ;
+  let element =  event.target ; // $(this) only works if you don't use arrow function here
+  $('.chatroom').removeClass('active') ; // remove the 'active' class from any other div with class 'chatroom'
   $(element).addClass('active') ;
 
   let roomName = $(element).find('h5').text() ;
   let roomStatus = $(element).find('h6').text() ;
   let roomPath = $(element).attr('path') ;
-
-  console.log(`clicked the room ${roomName} - ${roomStatus} - ${roomPath}`) ;
-   //emit the event to join room here
   let newChatroom = new Chatroom(roomName, roomStatus, roomPath) ;
-  //TODO we are creating  a new chatroom everytime we click on it, make sure we aren't creating a new one
-  // use join chatroom here
-  emitToServer_NewChatroomAdded(newChatroom, ()=>{
+  console.log(`clicked the room ${roomName} - ${roomStatus} - ${roomPath}`) ;
+
+  //TODO create this method in chat.js
+  emitNewUserInChatroom(roomPath, myUserName, ()=>{
     console.log(`Successfully connected to the room ${roomName} - ${roomStatus} - ${roomPath}`) ;
     $('#chatHistory').html('') ;
     currentChatroom = newChatroom ;
-
   }) ;
 
+
 }) ;
+
+
+function highlightJoinedChatroom(chatroom){
+  // this function is only called in 2 cases :
+  //    when we first create a new room
+  //    when we join a chatroom using the link
+
+  // firstly we need to find the newly created div with class chatroom &  data-path = chatroomPath
+  let element = document.querySelector(`#room-${chatroom.path}`) ;
+
+  $('.chatroom').removeClass('active') ; // remove the 'active' class from any other div with class 'chatroom'
+  $(element).addClass('active') ;
+
+  console.log(`Successfully connected to the room ${chatroom.name} - ${chatroom.status} - ${chatroom.path}`) ;
+
+  currentChatroom = chatroom ;
+
+
+
+}
 
 
 

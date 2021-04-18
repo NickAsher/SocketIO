@@ -31,17 +31,10 @@ io.on('connect', (socket, req)=>{
 
 
 
-  socket.on('newUserEntered', (data)=>{
-    socket.broadcast.emit('newUserEntered', {userName : data.userName, time:data.time}) ;
-  }) ;
-
-
-
-  socket.on('newChatroomAdded', (data, fn)=>{
-    fn(true) ; //acknowledging to client that we received the event
+  socket.on('newChatroomAdded', (data, acknowledgement)=>{
+    acknowledgement(true) ;
 
     // join the client to a new namespace
-
     let newChatroom = new Chatroom(data.chatroom.name, data.chatroom.status, data.chatroom.path) ;
     newChatroom.addUser(data.sender) ;
 
@@ -63,26 +56,47 @@ io.on('connect', (socket, req)=>{
     let chatroomPath = data.chatroomPath ;
     let newUserName = data.newUserName ;
 
-    listOfCurrentlyUsedChatrooms.get(chatroomPath).addUser(data.newUserName) ;
-    let chatroom = listOfCurrentlyUsedChatrooms.get(chatroomPath) ;
-
     if(socket.room){
       socket.leave(socket.room);
     }
     socket.room = chatroomPath;
     socket.join(chatroomPath);
 
+    listOfCurrentlyUsedChatrooms.get(chatroomPath).addUser(data.newUserName) ; //this line won't work on fresh server restart if the chatroom is not added in the same session
+    let chatroom = listOfCurrentlyUsedChatrooms.get(chatroomPath) ;
+    socket.emit('joinChatroom', {chatroom:chatroom.toJSON()}) ;
+
+    //inform other users that a new user has joined the chatroom
     socket.to(chatroomPath).emit('newUser_in_Chatroom', {
       newUserName :newUserName,
       timestamp : (new Date()).getTime()
     }) ;
 
-    socket.emit('joinChatroom', {chatroom:chatroom.toJSON()}) ;
-
-
-
     console.log(`${socket.id} (${data.newUserName}) has joined the room `) ;
     console.log(io.sockets.adapter.rooms.get(chatroomPath)) ;
+  }) ;
+
+
+
+  socket.on('newUser_in_Chatroom', (data, acknowledgement)=>{
+    acknowledgement(true);
+    // connect the user to this chatroom
+
+    // listOfCurrentlyUsedChatrooms.get(data.chatroomPath).addUser(data.newUserName) ; // this line won't work on fresh server restart
+    if(socket.room){
+      socket.leave(socket.room);
+    }
+    socket.room = data.chatroomPath;
+    socket.join(data.chatroomPath);
+
+    //inform all other users that a new user has joined the chatroom
+    socket.to(data.chatroomPath).emit('newUser_in_Chatroom', {
+      newUserName :data.newUserName,
+      timestamp : (new Date()).getTime()
+    }) ;
+
+    console.log(`${socket.id} (${data.newUserName}) has joined the room `) ;
+    console.log(io.sockets.adapter.rooms.get(data.chatroomPath)) ;
   }) ;
 
 
