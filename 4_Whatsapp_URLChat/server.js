@@ -65,7 +65,7 @@ io.on('connect', (socket, req)=>{
 
     listOfCurrentlyUsedChatrooms.set(data.chatroom.path, newChatroom) ;
     console.log(`${socket.id} (${data.sender}) has joined the room ${newChatroom.name} at path ${newChatroom.path}`) ;
-    console.log(io.sockets.adapter.rooms) ;
+    console.log(io.sockets.adapter.rooms.get(newChatroom.path)) ;
   }) ;
 
 
@@ -93,8 +93,8 @@ io.on('connect', (socket, req)=>{
 
 
 
-    console.log(`${socket.id} (${data.sender}) has joined the room `) ;
-    console.log(io.sockets.adapter.rooms) ;
+    console.log(`${socket.id} (${data.newUserName}) has joined the room `) ;
+    console.log(io.sockets.adapter.rooms.get(chatroomPath)) ;
   }) ;
 
 

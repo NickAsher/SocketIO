@@ -59,8 +59,8 @@ function updateListOfChatroom_in_DOM(){
             <div class="chatroom row" path="${chatroom.path}">
                 <img  src="https://picsum.photos/70/70" class="rounded-circle"  >
                 <div>
-                    <h5> &nbsp; ${chatroom.name}</h5>
-                    <h6> ${chatroom.path}</h6>
+                    <h5> ${chatroom.name}</h5>
+                    <h6> ${chatroom.status}</h6>
                 </div>
             </div>
             <hr>
@@ -75,18 +75,20 @@ function updateListOfChatroom_in_DOM(){
 $(document).on("click",".chatroom", (event)=>{
 
   let element = event.target ; // $(this) only works if you don't use arrow function here
-   $('.chatroom').removeClass('active') ;
-   $(element).addClass('active') ;
+  $('.chatroom').removeClass('active') ;
+  $(element).addClass('active') ;
 
-   let roomName = $(element).find('h5').text() ;
-   let roomStatus = $(element).find('h6').text() ;
+  let roomName = $(element).find('h5').text() ;
+  let roomStatus = $(element).find('h6').text() ;
   let roomPath = $(element).attr('path') ;
 
-   console.log(`clicked the room ${roomName} - ${roomPath} - ${roomPath}`) ;
+  console.log(`clicked the room ${roomName} - ${roomStatus} - ${roomPath}`) ;
    //emit the event to join room here
-  let newChatroom = new Chatroom(roomName, roomStatus, roomPath)
+  let newChatroom = new Chatroom(roomName, roomStatus, roomPath) ;
   emitToServer_NewChatroomAdded(newChatroom, ()=>{
     console.log("succesfully connected to chatroom") ;
+    $('#chatHistory').html('') ;
+
   }) ;
 
 }) ;

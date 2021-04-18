@@ -86,6 +86,7 @@ socket.on('joinChatroom', (data)=>{
   console.log(data.chatroom) ;
 
   addChatRoomToLocalStorage(data.chatroom) ;
+  updateListOfChatroom_in_DOM() ;
 
 }) ;
 
