@@ -29,19 +29,7 @@ io.on('connect', (socket, req)=>{
   socket.emit('whatsapp_msg', {senderName:'Server', type : 'text', chatMessage:'Hey! Welcome here, welcome to our humble aboard', time:TimeOfGreetingMessage}) ;
 
 
-  socket.on('whatsapp_msg', (data, fn)=>{
 
-
-    fn(true) ; //telling the client that we got the message so that it can do first tick
-
-    io.emit('whatsapp_msg', {
-      senderName : data.senderName,
-      type:'text',
-      chatMessage:data.chatMessage,
-      time : data.time
-    }) ;
-    // you need some type of custom logic for msg reads, can't just do that with acknowledgements
-  }) ;
 
   socket.on('newUserEntered', (data)=>{
     socket.broadcast.emit('newUserEntered', {userName : data.userName, time:data.time}) ;
@@ -100,8 +88,7 @@ io.on('connect', (socket, req)=>{
 
 
   socket.on('msg_in_Chatroom', (data, acknowledgement)=>{
-    acknowledgement(true) ;
-    console.log("i have got the msg_in_Chatroom")
+    acknowledgement(true) ; // so i can do the single tick
 
     let roomPath = socket.room ;
     io.sockets.in(roomPath).emit('msg_in_Chatroom', {

@@ -1,3 +1,5 @@
+let currentChatroom = '' ; //variable to keep track of the currently used chatroom
+
 document.addEventListener('DOMContentLoaded', ()=>{
   // this is run after the dom content is loaded
   updateListOfChatroom_in_DOM() ;
@@ -30,6 +32,7 @@ document.querySelector('#btn_JoinChatroom').addEventListener('click', (event)=>{
   let chatroomPath = document.querySelector('#input_ChatroomLink').value ;
 
   document.querySelector('#input_ChatroomLink').value = '' ;
+  //TODO dont actually join the room here. we only join the room on clicking
   emitToServer_JoinChatroom(chatroomPath, myUserName, ()=>{
 
   }) ;
@@ -85,9 +88,12 @@ $(document).on("click",".chatroom", (event)=>{
   console.log(`clicked the room ${roomName} - ${roomStatus} - ${roomPath}`) ;
    //emit the event to join room here
   let newChatroom = new Chatroom(roomName, roomStatus, roomPath) ;
+  //TODO we are creating  a new chatroom everytime we click on it, make sure we aren't creating a new one
+  // use join chatroom here
   emitToServer_NewChatroomAdded(newChatroom, ()=>{
-    console.log("succesfully connected to chatroom") ;
+    console.log(`Successfully connected to the room ${roomName} - ${roomStatus} - ${roomPath}`) ;
     $('#chatHistory').html('') ;
+    currentChatroom = newChatroom ;
 
   }) ;
 
@@ -99,25 +105,32 @@ $(document).on("click",".chatroom", (event)=>{
 
 // setting the onClick listener when you press enter
 $('#chatMessageSend').click(()=>{
-
+  //TODO only send messages if user is connected to some room, currently messages are sent even if user isn't in chatroom
+  // we need to keep track of client to see if he is in some chatroom. Simply use a variable
+  if(currentChatroom == null || currentChatroom == ''){
+    console.log("You are not connected to any chatroom") ;
+    return ;
+  }
   let chatMessage = $('#chatMessageValue').val() ;
   $('#chatMessageValue').val('') ; // clearing the text field
 
-  console.log("Send button is clicked with message => " + chatMessage) ;
+  let timestamp = (new Date()).getTime() ;
+  let prettyTime = new Date(timestamp).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) ;
+
 
   // // firstly we append the message to chatHistory
-  // $('#chatHistory').append(
-  //   `<div id="myMsg-${sentTimestamp}" class="message sent">
-  //   ${chatMessage}
-  //   <span class="metadata">
-  //     <span class="time">${messageTime}</span>
-  //     <span id="readReceipt" class="tick"><i class="far fa-clock fa-xs" style="color: grey"></i> </span>
-  //   </span>
-  // </div>`) ;
+  $('#chatHistory').append(
+    `<div id="myMsg-${timestamp}" class="message sent">
+    ${chatMessage}
+    <span class="metadata">
+      <span class="time">${prettyTime}</span>
+      <span id="readReceipt" class="tick"><i class="far fa-clock fa-xs" style="color: grey"></i> </span>
+    </span>
+  </div>`) ;
 
 
-  emitToServer_Message(chatMessage, ()=>{
-    // document.querySelector(`#myMsg-${sentTimestamp} #readReceipt`).innerHTML = `<i class="fas fa-check fa-xs" style="color: grey"></i>` ;
+  emitToServer_Message(chatMessage, timestamp, ()=>{
+    document.querySelector(`#myMsg-${timestamp} #readReceipt`).innerHTML = `<i class="fas fa-check fa-xs" style="color: grey"></i>` ;
   }) ;
 
 
@@ -126,17 +139,12 @@ $('#chatMessageSend').click(()=>{
 }) ;
 
 
-function showMessageInChatHistory(sender, message, timestamp){
+function showMessageInChatHistory(sender, myUserName,  message, timestamp){
   let messageTime = (new Date(timestamp)).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) ;
 
-  // if message is sent by client, show the double tick(indicating message is delivered)
-  // if(sender == myUserName){
-  //   if(document.querySelector(`#myMsg-${timestamp}`) !== null){
-  //     document.querySelector(`#myMsg-${timestamp} #readReceipt`).innerHTML = `<i class="fas fa-check-double fa-xs" style="color: grey"></i>` ;
-  //   }
-  // }
-  // else if message is sent by other people, simply show the message in chatHistory
-  // else {
+
+  // if message is sent by other people, simply show the message in chatHistory
+  if(sender != myUserName){
     $('#chatHistory').append(
       `<div class="message received">
             <b>${sender} </b> <br> ${message}
@@ -145,7 +153,15 @@ function showMessageInChatHistory(sender, message, timestamp){
         </span>
       </div>`
     ) ;
-  // }
+  }
+  // else if message is sent by client, show the double tick(indicating message is delivered)
+  else {
+    if(document.querySelector(`#myMsg-${timestamp}`) !== null){
+      document.querySelector(`#myMsg-${timestamp} #readReceipt`).innerHTML = `<i class="fas fa-check-double fa-xs" style="color: grey"></i>` ;
+    }
+
+
+  }
 }
 
 

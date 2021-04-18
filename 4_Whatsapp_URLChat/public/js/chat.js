@@ -104,12 +104,12 @@ socket.on('newUser_in_Chatroom', (data)=> {
 }) ;
 
 
-function emitToServer_Message(message, callbackFunction){
+function emitToServer_Message(message, timestamp, callbackFunction){
 
   socket.emit('msg_in_Chatroom', {
     message : message,
     sender : myUserName,
-    timestamp : (new Date()).getTime()
+    timestamp : timestamp
   }, (serverCallback)=>{
     if(serverCallback == true){
       callbackFunction() ;
@@ -118,7 +118,7 @@ function emitToServer_Message(message, callbackFunction){
 }
 
 socket.on('msg_in_Chatroom', (data)=>{
-  showMessageInChatHistory(data.sender, data.message, data.timestamp) ;
+  showMessageInChatHistory(data.sender, myUserName, data.message, data.timestamp) ;
 }) ;
 
 
