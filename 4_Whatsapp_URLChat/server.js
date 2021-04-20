@@ -2,7 +2,7 @@ const express = require('express') ;
 const socketio = require('socket.io') ;
 
 const Chatroom = require("./data/classes/Chatroom_backend.js");
-
+const ChatroomUtils = require('./util/ChatroomUtils') ;
 const app = express() ;
 
 app.use(express.static(__dirname + '/public')) ;
@@ -19,7 +19,7 @@ const io = socketio(expressServer, {
   methods: ["GET", "POST"]
 }) ;
 
-let listOfCurrentlyUsedChatrooms = new Map() ;
+ChatroomUtils.init_ListOfCurrentlyUsedChatrooms() ;
 
 io.on('connect', (socket, req)=>{
 
@@ -35,8 +35,8 @@ io.on('connect', (socket, req)=>{
     acknowledgement(true) ;
 
     // join the client to a new namespace
-    let newChatroom = new Chatroom(data.chatroom.name, data.chatroom.status, data.chatroom.path) ;
-    newChatroom.addUser(data.sender) ;
+    let newChatroom = ChatroomUtils.createNewChatroom(data.chatroom.name, data.chatroom.status, data.chatroom.path) ;
+    ChatroomUtils.addUserToChatroom(data.chatroom.path, data.sender) ;
 
     if(socket.room){
       socket.leave(socket.room);
@@ -44,7 +44,6 @@ io.on('connect', (socket, req)=>{
     socket.room = newChatroom.path;
     socket.join(newChatroom.path);
 
-    listOfCurrentlyUsedChatrooms.set(data.chatroom.path, newChatroom) ;
     console.log(`${socket.id} (${data.sender}) has joined the room ${newChatroom.name} at path ${newChatroom.path}`) ;
     console.log(io.sockets.adapter.rooms.get(newChatroom.path)) ;
   }) ;
@@ -62,8 +61,8 @@ io.on('connect', (socket, req)=>{
     socket.room = chatroomPath;
     socket.join(chatroomPath);
 
-    listOfCurrentlyUsedChatrooms.get(chatroomPath).addUser(data.newUserName) ; //this line won't work on fresh server restart if the chatroom is not added in the same session
-    let chatroom = listOfCurrentlyUsedChatrooms.get(chatroomPath) ;
+    ChatroomUtils.addUserToChatroom(chatroomPath, data.newUserName) ; //this line won't work on fresh server restart if the chatroom is not added in the same session
+    let chatroom = ChatroomUtils.getChatroomByPath(chatroomPath) ;
     socket.emit('joinChatroom', {chatroom:chatroom.toJSON()}) ;
 
     //inform other users that a new user has joined the chatroom
@@ -82,7 +81,10 @@ io.on('connect', (socket, req)=>{
     acknowledgement(true);
     // connect the user to this chatroom
 
-    // listOfCurrentlyUsedChatrooms.get(data.chatroomPath).addUser(data.newUserName) ; // this line won't work on fresh server restart
+    // listOfCurrentlyUsedChatrooms.get(path).addUser(user)  is not useful here because
+    // the userArray in chatroom object is like the users in a whatsapp group
+    // we track of which users are in the group. We don't keep track of which users are currently online
+
     if(socket.room){
       socket.leave(socket.room);
     }

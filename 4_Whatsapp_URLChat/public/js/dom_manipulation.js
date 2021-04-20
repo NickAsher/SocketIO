@@ -22,7 +22,9 @@ $('#btn_AddNewChatroom').click(()=>{
   emitToServer_NewChatroomAdded(newChatroom, ()=>{
     addChatRoomToLocalStorage(newChatroom.toJSON()) ;
     updateListOfChatroom_in_DOM() ;
-    highlightJoinedChatroom(chatroomPath) ;
+    setTimeout(()=>{
+      highlightJoinedChatroom(chatroomPath) ;
+    }, 500) ;
   }) ;
 
 
@@ -32,9 +34,8 @@ $('#btn_JoinChatroom').click(()=>{
   let chatroomPath = document.querySelector('#input_ChatroomLink').value ;
 
   document.querySelector('#input_ChatroomLink').value = '' ;
-  //TODO dont actually join the room here. we only join the room on clicking
   emitToServer_JoinChatroom(chatroomPath, myUserName, ()=>{
-
+      // DOM manipulation is done in the chat.js  socket.on('joinChatroom'
   }) ;
 
 }) ;
@@ -49,6 +50,7 @@ function addChatRoomToLocalStorage(chatroom){
   listOfChatrooms.push(chatroom) ;
   localStorage.setItem('listOfChatrooms', JSON.stringify(listOfChatrooms)) ;
 }
+
 
 function updateListOfChatroom_in_DOM(){
   if(localStorage.getItem('listOfChatrooms') == null || localStorage.getItem('listOfChatrooms') == ''){
@@ -87,7 +89,6 @@ $(document).on("click",".chatroom", (event)=>{
   let newChatroom = new Chatroom(roomName, roomStatus, roomPath) ;
   console.log(`clicked the room ${roomName} - ${roomStatus} - ${roomPath}`) ;
 
-  //TODO create this method in chat.js
   emitNewUserInChatroom(roomPath, myUserName, ()=>{
     console.log(`Successfully connected to the room ${roomName} - ${roomStatus} - ${roomPath}`) ;
     $('#chatHistory').html('') ;
@@ -103,18 +104,13 @@ function highlightJoinedChatroom(chatroom){
   //    when we first create a new room
   //    when we join a chatroom using the link
 
-  // firstly we need to find the newly created div with class chatroom &  data-path = chatroomPath
   let element = document.querySelector(`#room-${chatroom.path}`) ;
 
   $('.chatroom').removeClass('active') ; // remove the 'active' class from any other div with class 'chatroom'
   $(element).addClass('active') ;
 
   console.log(`Successfully connected to the room ${chatroom.name} - ${chatroom.status} - ${chatroom.path}`) ;
-
   currentChatroom = chatroom ;
-
-
-
 }
 
 
@@ -123,18 +119,18 @@ function highlightJoinedChatroom(chatroom){
 
 // setting the onClick listener when you press enter
 $('#chatMessageSend').click(()=>{
-  //TODO only send messages if user is connected to some room, currently messages are sent even if user isn't in chatroom
+
   // we need to keep track of client to see if he is in some chatroom. Simply use a variable
   if(currentChatroom == null || currentChatroom == ''){
     console.log("You are not connected to any chatroom") ;
     return ;
   }
+
   let chatMessage = $('#chatMessageValue').val() ;
   $('#chatMessageValue').val('') ; // clearing the text field
 
   let timestamp = (new Date()).getTime() ;
   let prettyTime = new Date(timestamp).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) ;
-
 
   // // firstly we append the message to chatHistory
   $('#chatHistory').append(
@@ -146,20 +142,14 @@ $('#chatMessageSend').click(()=>{
     </span>
   </div>`) ;
 
-
   emitToServer_Message(chatMessage, timestamp, ()=>{
     document.querySelector(`#myMsg-${timestamp} #readReceipt`).innerHTML = `<i class="fas fa-check fa-xs" style="color: grey"></i>` ;
   }) ;
-
-
-
-
 }) ;
 
 
 function showMessageInChatHistory(sender, myUserName,  message, timestamp){
-  let messageTime = (new Date(timestamp)).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) ;
-
+  let prettyTime = (new Date(timestamp)).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) ;
 
   // if message is sent by other people, simply show the message in chatHistory
   if(sender != myUserName){
@@ -167,7 +157,7 @@ function showMessageInChatHistory(sender, myUserName,  message, timestamp){
       `<div class="message received">
             <b>${sender} </b> <br> ${message}
         <span class="metadata">
-            <span class="time">${messageTime}</span>
+            <span class="time">${prettyTime}</span>
         </span>
       </div>`
     ) ;
@@ -177,9 +167,28 @@ function showMessageInChatHistory(sender, myUserName,  message, timestamp){
     if(document.querySelector(`#myMsg-${timestamp}`) !== null){
       document.querySelector(`#myMsg-${timestamp} #readReceipt`).innerHTML = `<i class="fas fa-check-double fa-xs" style="color: grey"></i>` ;
     }
-
-
   }
 }
 
 
+async function createRandomURL(userName='Rafique', roomName='yolo'){
+  let stringToEncode = `${userName} - ${roomName} - ${(new Date()).getTime()} - ${navigator.userAgent}`;
+  console.log(stringToEncode) ;
+    // encode as UTF-8
+    const msgBuffer = new TextEncoder().encode(`${stringToEncode}`);
+    console.log(msgBuffer) ;
+    // hash the message
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    console.log(hashBuffer) ;
+
+    // convert ArrayBuffer to Array
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    console.log(hashArray) ;
+    // convert bytes to hex string
+    const hashHex = hashArray.map(b => b.toString(36).padStart(2, '0')).join('');
+    console.log(hashHex) ;
+
+    // var base36 = parseInt(hashHex, 36)
+    // return hashHex;
+
+}

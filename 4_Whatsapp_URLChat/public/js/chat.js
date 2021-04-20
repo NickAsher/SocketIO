@@ -35,22 +35,8 @@ socket.on('whatsapp_msg', (data)=>{
 
 
 
-// this event is triggered everytime a new user enters the chat.
-// this is not triggered for us, when we, ourselves enter the chat
-// socket.on('newUserEntered', (data)=> {
-//   let newUserName = data.userName;
-//
-//   $('#chatHistory').append(
-//     `<div class="message control">
-//         ${newUserName} has entered the chat
-//       </div>`
-//   ) ;
-// }) ;
-  // you can't have disconnect messages without implementing some custom logic
-  // because there is no event like socket.on('disconnect') on client side. This event is only on server side.
-  // To Implement Disconnect messages, you have to track when the client leaves
-  // using a map of socket-id's and client names, and see which socket id is disconnected from the server
-  // and then send a disconnect emit from the server
+
+
 
 
 
@@ -112,6 +98,11 @@ socket.on('newUser_in_Chatroom', (data)=> {
         ${newUserName} has entered the chat
       </div>`
   );
+  // you can't have disconnect messages without implementing some custom logic
+  // because there is no event like socket.on('disconnect') on client side. This event is only on server side.
+  // To Implement Disconnect messages, you have to track when the client leaves
+  // using a map of socket-id's and client names, and see which socket id is disconnected from the server
+  // and then send a disconnect emit from the server
 
 
 

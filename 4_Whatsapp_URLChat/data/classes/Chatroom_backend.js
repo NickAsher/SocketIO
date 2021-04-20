@@ -12,6 +12,16 @@ class Chatroom{
     this.currentUsers.push(newUser) ;
   }
 
+  deleteUser(userNameToDelete){
+    // all the elements matching the filter criteria will remain in the new array
+    let newUsersArray = this.currentUsers.filter((userName)=>{
+      // all those userName which are not equal to the 'userNameToDelete' will remain in the new array
+      return userNameToDelete != userName ;
+    }) ;
+
+    this.currentUsers = newUsersArray ;
+  }
+
   toJSON(){
     return {
       name : this.name,
