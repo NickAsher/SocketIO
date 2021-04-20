@@ -22,9 +22,8 @@ $('#btn_AddNewChatroom').click(()=>{
   emitToServer_NewChatroomAdded(newChatroom, ()=>{
     addChatRoomToLocalStorage(newChatroom.toJSON()) ;
     updateListOfChatroom_in_DOM() ;
-    setTimeout(()=>{
-      highlightJoinedChatroom(chatroomPath) ;
-    }, 500) ;
+    highlightJoinedChatroom(newChatroom.toJSON()) ;
+
   }) ;
 
 

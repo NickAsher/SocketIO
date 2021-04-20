@@ -26,7 +26,8 @@ class Chatroom{
     return {
       name : this.name,
       status : this.status,
-      path : this.path
+      path : this.path,
+      currentUsers : this.currentUsers
     } ;
   }
 

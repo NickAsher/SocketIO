@@ -5,11 +5,33 @@ let listOfCurrentlyUsedChatrooms ;
 
 
 const init_ListOfCurrentlyUsedChatrooms=()=>{
-  if(listOfCurrentlyUsedChatrooms == null){
-    //TODO read the list of chatrooms from file storage, if that is also empty, then initialise a new Map
-    listOfCurrentlyUsedChatrooms = new Map() ;
+  listOfCurrentlyUsedChatrooms = new Map() ;
+
+  try {
+    const dataBuffer = fs.readFileSync(__dirname + './../data/fake_db/chatroom_data.json') ;
+    const dataJSON = dataBuffer.toString() ;
+    let jsonObject =  JSON.parse(dataJSON) ;
+
+    for(const key in jsonObject){
+      listOfCurrentlyUsedChatrooms.set(key, new Chatroom(jsonObject[key])) ;
+    }
+
+  } catch (e) {
+    console.log(e) ;
+    console.log("Cannot initialise listOfCurrentlyUsedChatrooms") ;
+
   }
 } ;
+
+
+const saveListOfCurrentlyUsedChatrooms = ()=>{
+  let jsonObject = {};
+  for(const [key,value] of listOfCurrentlyUsedChatrooms.entries()){
+    jsonObject[key] = value.toJSON() ;
+  }
+  fs.writeFileSync(__dirname + './../data/fake_db/chatroom_data.json', JSON.stringify(jsonObject)) ;
+} ;
+
 
 
 const getChatroomByPath=(chatroomPath)=>{
@@ -21,20 +43,18 @@ const createNewChatroom=(chatroomName, chatroomStatus, chatroomPath)=>{
   // check if a chatroom with this path already exists
   if(listOfCurrentlyUsedChatrooms.get(chatroomPath) != null){
     console.log(`Err : You tried to crate a new chatroom with path  ${chatroomPath}, but it already exists`) ;
-    return -1;
+    return listOfCurrentlyUsedChatrooms.get(chatroomPath) ;
   }
 
   let newChatroom = new Chatroom(chatroomName, chatroomStatus, chatroomPath) ;
   listOfCurrentlyUsedChatrooms.set(chatroomPath, newChatroom) ;
 
-  //TODO append the new chatroom in File Storage
-
-
+  saveListOfCurrentlyUsedChatrooms() ;
   return newChatroom ;
 } ;
 
-const addUserToChatroom = (chatroomPath, newUserName, )=>{
 
+const addUserToChatroom = (chatroomPath, newUserName, )=>{
   //firstly check if chatroom is not null
   if(listOfCurrentlyUsedChatrooms.get(chatroomPath) == null) {
     console.log(`Err : You tried to add the user ${newUserName} to ${chatroomPath}, but no such chatroom exists `) ;
@@ -42,11 +62,10 @@ const addUserToChatroom = (chatroomPath, newUserName, )=>{
   }
 
   listOfCurrentlyUsedChatrooms.get(chatroomPath).addUser(newUserName) ;
-
-  // TODO update the chatroom in File Storage
-
+  saveListOfCurrentlyUsedChatrooms() ;
   return listOfCurrentlyUsedChatrooms.get(chatroomPath) ;
 } ;
+
 
 const deleteUserFromChatroom = (chatroomPath, userName)=>{
   // this function will perform two things
@@ -71,13 +90,7 @@ const deleteUserFromChatroom = (chatroomPath, userName)=>{
 } ;
 
 
-function getListOfChatroomsFromFile(){
 
-}
-
-function writeListOfChatroomsToFile(){
-
-}
 
 
 module.exports = {

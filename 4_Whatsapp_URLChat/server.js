@@ -71,7 +71,7 @@ io.on('connect', (socket, req)=>{
       timestamp : (new Date()).getTime()
     }) ;
 
-    console.log(`${socket.id} (${data.newUserName}) has joined the room `) ;
+    console.log(`${socket.id} (${data.newUserName}) has joined the room ${chatroomPath}`) ;
     console.log(io.sockets.adapter.rooms.get(chatroomPath)) ;
   }) ;
 
@@ -97,7 +97,7 @@ io.on('connect', (socket, req)=>{
       timestamp : (new Date()).getTime()
     }) ;
 
-    console.log(`${socket.id} (${data.newUserName}) has joined the room `) ;
+    console.log(`${socket.id} (${data.newUserName}) has joined the room ${data.chatroomPath}`) ;
     console.log(io.sockets.adapter.rooms.get(data.chatroomPath)) ;
   }) ;
 
