@@ -81,12 +81,12 @@ const deleteUserFromChatroom = (chatroomPath, userName)=>{
 
   listOfCurrentlyUsedChatrooms.get(chatroomPath).deleteUser(userName) ;
 
-  // TODO update the chatroom in file storage
+  // if there aren't any users in the chatroom, then delete the chatroom too
+  if(listOfCurrentlyUsedChatrooms.get(chatroomPath).currentUsers.length == 0){
+    listOfCurrentlyUsedChatrooms.delete(chatroomPath) ;
+  }
 
-  //TODO delete the chatroom also if it empty
-
-  //TODO write the updated listOfChatrooms in file storage
-
+  saveListOfCurrentlyUsedChatrooms() ;
 } ;
 
 

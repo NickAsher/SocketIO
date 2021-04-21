@@ -39,37 +39,47 @@
   right: 20px;
 }
 
-.chatroom {
+.chatroom-container {
   background-color: #fff;
   padding: 15px 0px;
   margin: 0;
   z-index: 10;
 }
-.chatroom img {
+.chatroom-container:hover {
+  background-color: #E9EAEC;
+  cursor: pointer;
+}
+.chatroom-container.active {
+  background-color: #E9EAEC;
+  cursor: pointer;
+}
+.chatroom-container img {
   width: 40px;
   height: 40px;
   margin: 5px 0px 5px 20px;
 }
-.chatroom h5 {
+.chatroom-container h5 {
   font-size: 14px;
   margin-top: 8px;
   margin-left: 4px;
   color: black;
   font-weight: bold;
 }
-.chatroom h6 {
+.chatroom-container h6 {
   font-size: 12px;
   margin-left: 10px;
   color: black;
   margin-top: -4px;
 }
-.chatroom:hover {
-  background-color: #E9EAEC;
-  cursor: pointer;
-}
-.chatroom.active {
-  background-color: #E9EAEC;
-  cursor: pointer;
+.chatroom-container div button {
+  padding: 10px;
+  outline: none;
+  border-style: none;
+  color: red;
+  background: transparent;
+  position: absolute;
+  right: 20px;
+  margin-top: 10px;
 }
 
 hr {

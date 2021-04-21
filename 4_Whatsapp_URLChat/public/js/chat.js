@@ -55,10 +55,10 @@ function emitToServer_NewChatroomAdded(newChatroom, callbackFunction){
   }) ;
 }
 
-function emitToServer_JoinChatroom(chatroomPath, newUserName, callbackFunction) {
+function emitToServer_JoinChatroom(chatroomPath, callbackFunction) {
   socket.emit('joinChatroom', {
     chatroomPath: chatroomPath,
-    newUserName : newUserName
+    newUserName : myUserName
   }, (serverCallback)=>{
     if(serverCallback == true){
       callbackFunction() ;
@@ -78,10 +78,10 @@ socket.on('joinChatroom', (data)=>{
 }) ;
 
 
-function emitNewUserInChatroom(chatroomPath, senderName, DOMCallbackFunction){
+function emitNewUserInChatroom(chatroomPath, DOMCallbackFunction){
   socket.emit('newUser_in_Chatroom', {
     chatroomPath : chatroomPath,
-    newUserName : senderName
+    newUserName : myUserName
   }, (serverAcknowledgement)=>{
     if(serverAcknowledgement == true){
       DOMCallbackFunction() ;
@@ -109,6 +109,33 @@ socket.on('newUser_in_Chatroom', (data)=> {
 }) ;
 
 
+function emitToServer_UserLeftChatroom(chatroomPath, DOMCallbackFunction){
+  socket.emit('userLeftChatroom', {
+    chatroomPath : chatroomPath,
+    userName : myUserName,
+    timestamp : (new Date()).getTime()
+  }, (serverAcknowledgement)=>{
+    if(serverAcknowledgement == true){
+      DOMCallbackFunction() ;
+    }
+  }) ;
+}
+
+socket.on('userLeftChatroom', (data)=>{
+  //Todo inform everone that user left chatroom
+
+  let userName = data.userName;
+
+  $('#chatHistory').append(
+    `<br>
+      <div class="message control">
+        ${userName} has left the chatroom
+      </div>`
+  );
+}) ;
+
+
+
 function emitToServer_Message(message, timestamp, callbackFunction){
 
   socket.emit('msg_in_Chatroom', {
@@ -121,6 +148,8 @@ function emitToServer_Message(message, timestamp, callbackFunction){
     }
   }) ;
 }
+
+
 
 socket.on('msg_in_Chatroom', (data)=>{
   showMessageInChatHistory(data.sender, myUserName, data.message, data.timestamp) ;

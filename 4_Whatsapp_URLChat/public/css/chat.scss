@@ -48,11 +48,36 @@ $color_dark_green : #075B51 ;
 
 }
 
-.chatroom {
+//#div_ListOfChatrooms{
+//  button{
+//    padding: 0 ;
+//    padding-right: 10px;
+//    outline:none;
+//    border-style: none;
+//    color: red;
+//    background: transparent;
+//    position: absolute;
+//    right: 20px;
+//    margin-top: 30px;
+//
+//  }
+//}
+
+.chatroom-container {
   background-color: #fff ;
   padding: 15px 0px;
   margin: 0;
   z-index: 10;
+
+  &:hover {
+    background-color: #E9EAEC;
+    cursor: pointer;
+  }
+
+  &.active {
+    background-color: #E9EAEC;
+    cursor: pointer;
+  }
 
   img {
     width: 40px;
@@ -75,15 +100,19 @@ $color_dark_green : #075B51 ;
     margin-top: -4px;
   }
 
-  &:hover {
-    background-color: #E9EAEC;
-    cursor: pointer;
+  div button{
+    padding: 10px ;
+    outline:none;
+    border-style: none;
+    color: red;
+    background: transparent;
+    position: absolute;
+    right: 20px;
+    margin-top: 10px;
+
   }
 
-  &.active {
-    background-color: #E9EAEC;
-    cursor: pointer;
-  }
+
 }
 
 hr{

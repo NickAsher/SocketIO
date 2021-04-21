@@ -102,6 +102,20 @@ io.on('connect', (socket, req)=>{
   }) ;
 
 
+  socket.on('userLeftChatroom', (data, acknowledgement)=>{
+    acknowledgement(true) ;
+    socket.leave(data.chatroomPath);
+    ChatroomUtils.deleteUserFromChatroom(data.chatroomPath, data.userName) ; //this line won't work on fresh server restart if the chatroom is not added in the same session
+
+    //inform all other users that a new user has joined the chatroom
+    socket.to(data.chatroomPath).emit('userLeftChatroom', {
+      userName :data.userName,
+      chatroomPath : data.chatroomPath
+    }) ;
+
+  }) ;
+
+
 
   socket.on('msg_in_Chatroom', (data, acknowledgement)=>{
     acknowledgement(true) ; // so i can do the single tick

@@ -23,20 +23,17 @@ $('#btn_AddNewChatroom').click(()=>{
     addChatRoomToLocalStorage(newChatroom.toJSON()) ;
     updateListOfChatroom_in_DOM() ;
     highlightJoinedChatroom(newChatroom.toJSON()) ;
-
   }) ;
-
-
 }) ;
+
 
 $('#btn_JoinChatroom').click(()=>{
   let chatroomPath = document.querySelector('#input_ChatroomLink').value ;
 
   document.querySelector('#input_ChatroomLink').value = '' ;
-  emitToServer_JoinChatroom(chatroomPath, myUserName, ()=>{
+  emitToServer_JoinChatroom(chatroomPath, ()=>{
       // DOM manipulation is done in the chat.js  socket.on('joinChatroom'
   }) ;
-
 }) ;
 
 
@@ -60,16 +57,40 @@ function updateListOfChatroom_in_DOM(){
   document.querySelector('#div_ListOfChatrooms').innerHTML = '' ;
   listOfChatrooms.forEach((chatroom)=>{
     document.querySelector('#div_ListOfChatrooms').innerHTML += `
-            <div id="room-${chatroom.path}" class="chatroom row" path="${chatroom.path}">
-                <img  src="https://picsum.photos/70/70" class="rounded-circle"  >
-                <div>
-                    <h5> ${chatroom.name}</h5>
-                    <h6> ${chatroom.status}</h6>
+            <div class="chatroom-container row no-margin-padding">
+                    <div class="col-md-10 no-margin-padding">
+                        <div id="room-${chatroom.path}" class="chatroom row " path="${chatroom.path}">
+                            <img  src="https://picsum.photos/70/70" class="rounded-circle"  >
+                            <div>
+                                <h5> ${chatroom.name}</h5>
+                                <h6> ${chatroom.status}</h6>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn_deleteRoom far fa-trash-alt" data-path="${chatroom.path}"></button>
+                    </div>
                 </div>
-            </div>
-            <hr>
     ` ;
   }) ;
+}
+
+function deleteRoomFromLocalStorage(chatroomPath){
+  if(localStorage.getItem('listOfChatrooms') == null || localStorage.getItem('listOfChatrooms') == ''){
+    return ;
+  }
+  let listOfChatrooms = JSON.parse(localStorage.getItem('listOfChatrooms')) ;
+
+  let newListOfChatrooms = listOfChatrooms.filter((chatroom)=>{
+  // for each element, the boolean statement that returns 'true' will remain in the new array
+    if(chatroom.path == chatroomPath){
+      return false ;
+    }else{
+      return true ;
+    }
+  }) ;
+  localStorage.setItem('listOfChatrooms', JSON.stringify(newListOfChatrooms)) ;
 }
 
 
@@ -78,7 +99,7 @@ function updateListOfChatroom_in_DOM(){
 // use event.target to get the element
 $(document).on("click",".chatroom", (event)=>{
 
-  let element =  event.target ; // $(this) only works if you don't use arrow function here
+  let element =  event.currentTarget ; // $(this) only works if you don't use arrow function here
   $('.chatroom').removeClass('active') ; // remove the 'active' class from any other div with class 'chatroom'
   $(element).addClass('active') ;
 
@@ -88,7 +109,7 @@ $(document).on("click",".chatroom", (event)=>{
   let newChatroom = new Chatroom(roomName, roomStatus, roomPath) ;
   console.log(`clicked the room ${roomName} - ${roomStatus} - ${roomPath}`) ;
 
-  emitNewUserInChatroom(roomPath, myUserName, ()=>{
+  emitNewUserInChatroom(roomPath, ()=>{
     console.log(`Successfully connected to the room ${roomName} - ${roomStatus} - ${roomPath}`) ;
     $('#chatHistory').html('') ;
     currentChatroom = newChatroom ;
@@ -168,6 +189,22 @@ function showMessageInChatHistory(sender, myUserName,  message, timestamp){
     }
   }
 }
+
+
+$(document).on('click', '.btn_deleteRoom', (event)=>{
+  let element = event.currentTarget ;
+  let chatroomPath = $(element).attr('data-path') ;
+
+
+
+  // TODO send the emit event to server that u left this room
+  emitToServer_UserLeftChatroom(chatroomPath, ()=>{
+    deleteRoomFromLocalStorage(chatroomPath) ;
+    updateListOfChatroom_in_DOM() ;
+  }) ;
+
+
+}) ;
 
 
 async function createRandomURL(userName='Rafique', roomName='yolo'){
