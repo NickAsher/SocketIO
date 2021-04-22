@@ -1,10 +1,10 @@
 class Chatroom{
 
-  constructor(name, status, path){
+  constructor(name, status, path, currentUsers = []){
     this.name = name ;
     this.status = status ;
     this.path = path ;
-    this.currentUsers = [] ;
+    this.currentUsers = currentUsers ;
     // this.messageHistory = [] ;  // for future use, for keeping backup
   }
 
