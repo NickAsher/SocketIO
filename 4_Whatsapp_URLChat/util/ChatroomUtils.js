@@ -13,7 +13,11 @@ const init_ListOfCurrentlyUsedChatrooms=()=>{
     let jsonObject =  JSON.parse(dataJSON) ;
 
     for(const key in jsonObject){
-      listOfCurrentlyUsedChatrooms.set(key, new Chatroom(jsonObject[key])) ;
+      let chatroomName = jsonObject[key]['name'] ;
+      let chatroomStatus = jsonObject[key]['name'] ;
+      let chatroomPath = jsonObject[key]['name'] ;
+
+      listOfCurrentlyUsedChatrooms.set(key, new Chatroom(chatroomName, chatroomStatus, chatroomPath)) ;
     }
 
   } catch (e) {
