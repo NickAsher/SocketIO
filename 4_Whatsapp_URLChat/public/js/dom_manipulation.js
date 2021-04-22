@@ -10,21 +10,34 @@ $('#btn_AddNewChatroom').click(()=>{
   //TODO create random links for chatrooms
   let chatroomName = document.querySelector('#input_ChatroomName').value ;
   let chatroomStatus = document.querySelector('#input_ChatroomStatus').value ;
-  let chatroomPath = document.querySelector('#input_ChatroomPath').value ;
 
   //clear input fields
   document.querySelector('#input_ChatroomName').value = '' ;
   document.querySelector('#input_ChatroomStatus').value = '' ;
-  document.querySelector('#input_ChatroomPath').value = '' ;
 
-  let newChatroom = new Chatroom(chatroomName, chatroomStatus, chatroomPath) ;
-
-  emitToServer_NewChatroomAdded(newChatroom, ()=>{
-    addChatRoomToLocalStorage(newChatroom.toJSON()) ;
-    updateListOfChatroom_in_DOM() ;
-    highlightJoinedChatroom(newChatroom.toJSON()) ;
+  emitToServer_RequestNewChatroom(chatroomName, chatroomStatus, ()=>{
+    $('#modal_Loading').modal('show') ;
   }) ;
+
+
 }) ;
+
+
+function onChatroomAdded(newChatroom){
+  setTimeout(()=>{
+    $('#modal_Loading').modal('hide') ;
+  }, 1000) ;
+
+
+  addChatRoomToLocalStorage(newChatroom) ;
+  updateListOfChatroom_in_DOM() ;
+  highlightJoinedChatroom(newChatroom) ;
+
+
+}
+
+
+
 
 
 $('#btn_JoinChatroom').click(()=>{
@@ -32,9 +45,20 @@ $('#btn_JoinChatroom').click(()=>{
 
   document.querySelector('#input_ChatroomLink').value = '' ;
   emitToServer_JoinChatroom(chatroomPath, ()=>{
-      // DOM manipulation is done in the chat.js  socket.on('joinChatroom'
+    $('#modal_Loading').modal('show') ;
   }) ;
 }) ;
+
+
+function onChatroomLinked(newChatroom){
+  setTimeout(()=>{
+    $('#modal_Loading').modal('hide') ;
+  }, 1000) ;
+
+  addChatRoomToLocalStorage(newChatroom) ;
+  updateListOfChatroom_in_DOM(newChatroom) ;
+  highlightJoinedChatroom(newChatroom) ;
+}
 
 
 function addChatRoomToLocalStorage(chatroom){

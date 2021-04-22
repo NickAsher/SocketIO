@@ -49,6 +49,35 @@ io.on('connect', (socket, req)=>{
   }) ;
 
 
+  socket.on('C2S_RequestNewChatroom', (data, acknowledgement)=>{
+    acknowledgement(true) ;
+
+    let newChatroom = ChatroomUtils.createNewChatroom_w_RandomLink(data.chatroomName, data.chatroomStatus) ;
+    ChatroomUtils.addUserToChatroom(newChatroom.path, data.sender) ;
+
+
+    if(socket.room){
+      socket.leave(socket.room);
+    }
+    socket.room = newChatroom.path;
+    socket.join(newChatroom.path);
+
+    console.log(`${socket.id} (${data.sender}) has joined the room ${newChatroom.name} at path ${newChatroom.path}`) ;
+    console.log(io.sockets.adapter.rooms.get(newChatroom.path)) ;
+
+
+    //TODO emit back to client the new chatroom
+    socket.emit('S2C_NewChatroomAdded', {
+      newChatroom : newChatroom.toJSON()
+    }) ;
+
+  }) ;
+
+
+
+
+
+
   socket.on('joinChatroom', (data, acknowledgement)=>{
     acknowledgement(true) ;
 

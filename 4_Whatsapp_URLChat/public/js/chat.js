@@ -5,41 +5,35 @@ socket.on('connect', ()=>{
   console.log(socket.id) ;
 }) ;
 
-socket.on('whatsapp_msg', (data)=>{
 
-  let senderName = data.senderName ;
-  let chatMessage = data.chatMessage ;
-  let sentTimestamp = data.time ;
-  let messageTime = (new Date(sentTimestamp)).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) ;
 
-  // if message is sent by client, show the double tick(indicating message is delivered)
-  if(senderName == myUserName){
-    if(document.querySelector(`#myMsg-${sentTimestamp}`) !== null){
-      document.querySelector(`#myMsg-${sentTimestamp} #readReceipt`).innerHTML = `<i class="fas fa-check-double fa-xs" style="color: grey"></i>` ;
+
+
+
+
+function emitToServer_RequestNewChatroom(chatroomName, chatroomStatus, DOMCallbackFunction){
+  socket.emit('C2S_RequestNewChatroom', {
+    chatroomName : chatroomName,
+    chatroomStatus : chatroomStatus,
+    sender : myUserName
+  }, (serverCallback)=>{
+    if(serverCallback == true){
+      DOMCallbackFunction() ;
     }
-  }
-  // else if message is sent by other people, simply show the message in chatHistory
-  else {
-    $('#chatHistory').append(
-      `<div class="message received">
-            <b>${senderName} </b> <br> ${chatMessage}
-        <span class="metadata">
-            <span class="time">${messageTime}</span>
-        </span>
-      </div>`
-    ) ;
-  }
+  }) ;
+}
+
+
+socket.on('S2C_NewChatroomAdded', (data)=>{
+  let newChatroom = data.newChatroom ;
+  console.log('E: S2C_NewChatroomAdded, New chatroom added') ;
+
+
+  onChatroomAdded(newChatroom) ;
+
+
+
 }) ;
-
-
-
-
-
-
-
-
-
-
 
 
 function emitToServer_NewChatroomAdded(newChatroom, callbackFunction){
@@ -70,9 +64,7 @@ socket.on('joinChatroom', (data)=>{
   console.log("succesfully joined chatroom") ;
   console.log(data.chatroom) ;
 
-  addChatRoomToLocalStorage(data.chatroom) ;
-  updateListOfChatroom_in_DOM() ;
-  highlightJoinedChatroom(data.chatroom) ;
+  onChatroomLinked(data.chatroom) ;
 
 
 }) ;

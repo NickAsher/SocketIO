@@ -53,6 +53,37 @@ const createNewChatroom=(chatroomName, chatroomStatus, chatroomPath)=>{
   return newChatroom ;
 } ;
 
+const createRandomLink=()=>{
+  //TODO create the random link here
+  let result = [];
+  let characters = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz123456789';
+  let charactersLength = characters.length;  //58
+  for ( let i = 0; i < 6; i++ ) {
+    //Math.random =                 => returns a decimal number between 0 & 1    0.454689
+    // Math.random() * 58           =>   any decimal number between 0 & 57.99
+    // Math.floor(5.6764)= 5        => so it returns an integer number between 0 & 57
+    result.push(characters.charAt(Math.floor(Math.random() * charactersLength)));
+  }
+  let randomLink =  result.join('');
+
+  if(listOfCurrentlyUsedChatrooms.get(randomLink) != null){  // i.e. chatroom already exists
+    //call this method again using recursion
+    randomLink = createRandomLink() ;
+  }
+  console.log("The random link path generated is " + randomLink) ;
+  return randomLink ;
+} ;
+
+const createNewChatroom_w_RandomLink = (chatroomName, chatroomStatus)=>{
+  let randomLink = createRandomLink() ;
+  let newChatroom = new Chatroom(chatroomName, chatroomStatus, randomLink) ;
+  listOfCurrentlyUsedChatrooms.set(randomLink, newChatroom) ;
+
+  saveListOfCurrentlyUsedChatrooms() ;
+  return newChatroom ;
+
+} ;
+
 
 const addUserToChatroom = (chatroomPath, newUserName, )=>{
   //firstly check if chatroom is not null
@@ -97,6 +128,7 @@ module.exports = {
   init_ListOfCurrentlyUsedChatrooms,
   getChatroomByPath,
   createNewChatroom,
+  createNewChatroom_w_RandomLink ,
   addUserToChatroom,
   deleteUserFromChatroom
 } ;
