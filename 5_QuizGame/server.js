@@ -1,5 +1,6 @@
 const express = require('express') ;
 const socketio = require('socket.io') ;
+const GameroomUtils = require('./utils/GameroomUtils') ;
 
 
 const app = express() ;
@@ -18,85 +19,78 @@ const io = socketio(expressServer, {
   methods: ["GET", "POST"]
 }) ;
 
+GameroomUtils.initMapOfCurrentlyUsedGamerooms() ;
 
 io.on('connect', (socket, req)=>{
 
   console.log(`a new client has been connected to our server ${socket.id} `) ;
 
-  let TimeOfGreetingMessage = new Date() ;
-  socket.emit('whatsapp_msg', {senderName:'Server', type : 'text', chatMessage:'Hey! Welcome here, welcome to our humble aboard', time:TimeOfGreetingMessage}) ;
 
 
 
-
-
-
-
-  socket.on('C2S_RequestNewChatroom', (data, acknowledgement)=>{
+  socket.on('C2S_RequestNewGame', (data, acknowledgement)=>{
     acknowledgement(true) ;
 
+    let newGameroom = GameroomUtils.createNewGameroom(data.sender) ;
 
     if(socket.room){
       socket.leave(socket.room);
     }
-    socket.room = data.path;
-    socket.join(data.path);
+    socket.room = newGameroom.gameCode;
+    socket.join(newGameroom.gameCode);
 
-    console.log(`${socket.id} (${data.sender}) has joined the room ${data.name} at path ${data.path}`) ;
-    console.log(io.sockets.adapter.rooms.get(data.path)) ;
+    console.log(`${socket.id} (${data.sender}) has joined the gameCode ${newGameroom.gameCode}`) ;
 
-
-    //TODO emit back to client the new chatroom
-    socket.emit('S2C_NewChatroomAdded', {
-      newChatroom : data.toJSON()
+    socket.emit('S2C_NewGameStarted', {
+      gameroom : newGameroom
     }) ;
 
   }) ;
 
 
-
-
-
-
-  socket.on('joinChatroom', (data, acknowledgement)=>{
+  socket.on('C2S_JoinGame', (data, acknowledgement)=>{
     acknowledgement(true) ;
 
-    let chatroomPath = data.chatroomPath ;
-    let newUserName = data.newUserName ;
+    let gameroom = GameroomUtils.addUserToChatroom(data.gameCode, data.sender) ;
+    if(gameroom == 'USER_LIMIT_REACHED' || gameroom == 'GAMECODE_INVALID'){
+      //TODO emit some kind of error event
+      socket.emit('S2C_Error', {
+        e : gameroom
+      }) ;
+      return ;
+    }
 
     if(socket.room){
       socket.leave(socket.room);
     }
-    socket.room = chatroomPath;
-    socket.join(chatroomPath);
+    socket.room = gameroom.gameCode;
+    socket.join(gameroom.gameCode);
 
+    console.log(`${socket.id} (${data.sender}) has joined the gameCode ${gameroom.gameCode}`) ;
 
-    socket.emit('joinChatroom', {chatroom:data.toJSON()}) ;
+    socket.emit('S2C_NewGameJoined', {
+      gameroom : gameroom.toJSON()
+    }) ;
 
     //inform other users that a new user has joined the chatroom
-    socket.to(chatroomPath).emit('newUser_in_Chatroom', {
-      newUserName :newUserName,
-      timestamp : (new Date()).getTime()
+    socket.to(gameroom.gameCode).emit('S2C_NewUserJoinedGame', {
+      gameroom : gameroom,
+      newUserName :data.sender,
     }) ;
 
-    console.log(`${socket.id} (${data.newUserName}) has joined the room ${chatroomPath}`) ;
-    console.log(io.sockets.adapter.rooms.get(chatroomPath)) ;
+
   }) ;
 
 
 
 
-  socket.on('msg_in_Chatroom', (data, acknowledgement)=>{
-    acknowledgement(true) ; // so i can do the single tick
 
-    let roomPath = socket.room ;
-    //send the message to everyone
-    io.sockets.in(roomPath).emit('msg_in_Chatroom', {
-      message :data.message,
-      sender : data.sender,
-      timestamp : data.timestamp
-    }) ;
-  }) ;
+
+
+
+
+
+
 
 }) ;
 

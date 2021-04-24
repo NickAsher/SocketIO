@@ -1,5 +1,33 @@
-.yolo {
-  margin-top: 10px;
+body {
+  height: 100%;
+  width: 100%;
+  overflow-y: hidden !important;
+  overflow-x: hidden !important;
+  background: url(../images/backdrop.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.no-margin-padding {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.question-img {
+  background: url(../images/question_rounded_darkwine.png);
+  background-size: 100% 100%;
+  height: 100%;
+  width: 100%;
+  z-index: 20;
+  text-align: center;
+  display: table;
+}
+
+#div_QuestionStatement {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
 }
 
 /*# sourceMappingURL=game.css.map */
