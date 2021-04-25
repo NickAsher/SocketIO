@@ -32,6 +32,19 @@ body{
   display: table-cell;
   text-align: center;
   vertical-align: middle;
+}
 
+.my-answer-option{
+  display: table;
+  text-align: center;
+  vertical-align: middle;
+
+  cursor: pointer;
+
+  h5{
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+  }
 
 }
