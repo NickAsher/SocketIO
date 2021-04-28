@@ -32,17 +32,41 @@ function emitToServer_JoinGame(gameCode, DOMCallbackFunction){
 socket.on('S2C_NewGameJoined', (data)=>{
   let gameCode = data.gameroom.gameCode ;
   console.log("Gamecode is " + gameCode) ;
-  onGameJoined(gameCode) ;
+  onGameJoined(gameCode, data.listOfQuestions) ;
 }) ;
 
 
 socket.on('S2C_NewUserJoinedGame', (data)=>{
   console.log(`new User has joined the game ${data.gameroom.gameCode} ${data.newUserName}`) ;
-  onNewUserJoiningTheGame(data.gameroom.gameCode, data.newUserName) ;
+  onNewUserJoiningTheGame(data.gameroom.gameCode, data.newUserName, data.listOfQuestions) ;
 }) ;
 
 
 socket.on('S2C_Error', (data)=>{
   console.log('error : ' + data.e) ;
   showErrorToUser(data.e) ;
+}) ;
+
+
+
+function emitToServer_AnswerClicked(questionNo, selectedOption){
+  socket.emit('gC2S_gameRoundAnswered', {
+    questionNo : questionNo,
+    playerNo : localStorage.getItem('playerNo'),
+    selectedOption : selectedOption
+  }) ;
+}
+
+
+
+socket.on('gS2C_gameRoundAnsweredByBoth', (data)=>{
+  //TODO compute who answered the correct answer, show the green answer, update DOM,
+  console.log(data) ;
+}) ;
+
+
+socket.on('gS2C_gameRoundAnswered', (data)=>{
+  // simply show the message
+  let msg = data.msg ;
+  console.log(msg) ;
 }) ;

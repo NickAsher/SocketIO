@@ -4,6 +4,11 @@ const fs = require('fs') ;
 
 let mapOfCurrentlyUsedGamerooms ;
 
+
+const getGameroom = (gameCode) =>{
+  return mapOfCurrentlyUsedGamerooms.get(gameCode) ;
+} ;
+
 const initMapOfCurrentlyUsedGamerooms = ()=>{
   mapOfCurrentlyUsedGamerooms = new Map() ;
 
@@ -26,6 +31,7 @@ const initMapOfCurrentlyUsedGamerooms = ()=>{
 } ;
 
 const saveMapOfCurrentlyUsedGamerooms = ()=>{
+  console.log("Saving the list of used chatrooms ") ;
   let jsonObject = {};
   for(const [key,value] of mapOfCurrentlyUsedGamerooms.entries()){
     jsonObject[key] = value.toJSON() ;
@@ -98,9 +104,39 @@ const deleteUserFromGameroom = (gameCode, socketId)=>{
 
 
 
+const setupGameroomAnswers = (gameCode, listOfQuestions)=>{
+  let answerArray = [] ;
+  listOfQuestions.forEach((questionJsonObject)=>{
+
+    answerArray.push(questionJsonObject.correct_option) ;
+  }) ;
+  console.log(answerArray) ;
+  mapOfCurrentlyUsedGamerooms.get(gameCode).setupGameData(answerArray) ;
+  saveMapOfCurrentlyUsedGamerooms() ;
+} ;
+
+
+const setup_AnswerGiven_byPlayer = (gameCode, questionNo, playerNo, selectedOption)=>{
+  mapOfCurrentlyUsedGamerooms.get(gameCode).addRoundScore(questionNo, playerNo, selectedOption) ;
+  saveMapOfCurrentlyUsedGamerooms() ;
+
+  // check if both the players have answered the round or not, if both have answered then return 2, else return 1
+  if(mapOfCurrentlyUsedGamerooms.get(gameCode).gameData[questionNo]['p1_selected_option'] != null &&
+      mapOfCurrentlyUsedGamerooms.get(gameCode).gameData[questionNo]['p2_selected_option'] != null){
+    return 2 ;
+  }else{
+    return 1 ;
+  }
+} ;
+
+
+
 module.exports = {
   initMapOfCurrentlyUsedGamerooms,
+  getGameroom,
   createNewGameroom,
   addUserToChatroom,
-  deleteUserFromGameroom
+  deleteUserFromGameroom,
+  setupGameroomAnswers,
+  setup_AnswerGiven_byPlayer
 } ;

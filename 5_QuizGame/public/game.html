@@ -54,19 +54,18 @@
 
         <div class="col-2 no-margin-padding" style="color: #FFE8A2" >
             <div class="row no-margin-padding" style="height: 100%">
-                <div class="col-2 col-sm-2 col-md-2" style="height: inherit">
+                <div class="col-2 col-sm-2 col-md-2 no-margin-padding" style="height: inherit">
                     <div class="no-margin-padding" style="background: #FFE8A2; height: 100% ; width: 4px ;"></div>
-
                 </div>
                 <div class="col-10 col-sm-10 col-md-10 no-margin-padding">
                     <br><br><Br>
-                    <h1 class="text-center"> Score </h1>
+                    <h4 class="text-center"> Score </h4>
                     <br><Br><br>
-                    <h3 class="text-center"> You</h3>
+                    <h4 class="text-center"> You</h4>
                     <h1 id="div_YourScore" class="text-center"> 0 </h1>
                     <br><br>
-                    <h3 class="text-center">Player-2</h3>
-                    <h1 id="div_Player2Score" class="text-center"> 0</h1>
+                    <h4 class="text-center" style="color: #005cbf">Player-2</h4>
+                    <h1 id="div_Player2Score" class="text-center" style="color: #005cbf"> 0</h1>
                 </div>
             </div>
             <div>
@@ -86,7 +85,7 @@
 
                 <div class="modal-footer">
                     <button  type="button" data-toggle="modal" data-target="#modal_JoinNewGame" class="btn text-white" style="background-color: #079751" data-dismiss="modal">Join a game</button>
-                    <button id="btn_RequestGameCode" type="button"  class="btn text-white" style="background-color: #075B51">Invite Player</button>
+                    <button id="btn_RequestGameCode" type="button"  class="btn text-white" style="background-color: #075B51" data-dismiss="modal">Invite Player</button>
                 </div>
             </div>
         </div>
@@ -182,7 +181,6 @@
 <script src="js/game_DomManipulation.js"></script>
 <script src="js/game_SocketManipulation.js"></script>
 
-<script src="js/gameplay.js"></script>
 
 <script>
 
