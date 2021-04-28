@@ -3,6 +3,7 @@ const socketio = require('socket.io') ;
 const GameroomUtils = require('./utils/GameroomUtils') ;
 
 
+
 const app = express() ;
 
 app.use(express.static(__dirname + '/public')) ;
@@ -23,7 +24,8 @@ GameroomUtils.initMapOfCurrentlyUsedGamerooms() ;
 
 io.on('connect', (socket, req)=>{
 
-  console.log(`a new client has been connected to our server ${socket.id} `) ;
+  let connectTime = new Date(new Date().getTime()).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second : 'numeric', hour12: true }) ;
+  console.log(`a new client has been connected to our server ${socket.id} at ${connectTime}`) ;
 
 
 
@@ -31,7 +33,8 @@ io.on('connect', (socket, req)=>{
   socket.on('C2S_RequestNewGame', (data, acknowledgement)=>{
     acknowledgement(true) ;
 
-    let newGameroom = GameroomUtils.createNewGameroom(data.sender) ;
+    let newUser = {name : data.sender, socketId : socket.id} ;
+    let newGameroom = GameroomUtils.createNewGameroom(newUser) ;
 
     if(socket.room){
       socket.leave(socket.room);
@@ -51,9 +54,10 @@ io.on('connect', (socket, req)=>{
   socket.on('C2S_JoinGame', (data, acknowledgement)=>{
     acknowledgement(true) ;
 
-    let gameroom = GameroomUtils.addUserToChatroom(data.gameCode, data.sender) ;
+    let newUser = {name : data.sender, socketId : socket.id} ;
+    let gameroom = GameroomUtils.addUserToChatroom(data.gameCode, newUser) ;
+
     if(gameroom == 'USER_LIMIT_REACHED' || gameroom == 'GAMECODE_INVALID'){
-      //TODO emit some kind of error event
       socket.emit('S2C_Error', {
         e : gameroom
       }) ;
@@ -83,6 +87,14 @@ io.on('connect', (socket, req)=>{
 
 
 
+  socket.on('disconnect', (data)=>{
+    let gameCode = socket.room ;
+    console.log(`The ${socket.id} is disconnecting `) ;
+    if(gameCode == null){
+      return ;
+    }
+    GameroomUtils.deleteUserFromGameroom(gameCode, socket.id) ;
+  }) ;
 
 
 

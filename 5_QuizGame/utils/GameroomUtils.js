@@ -55,9 +55,9 @@ const createRandomGameCode=()=>{
 } ;
 
 
-const createNewGameroom = (firstPlayerName)=>{
+const createNewGameroom = (firstPlayer)=>{
   let randomGameCode = createRandomGameCode() ;
-  let newGameroom = new Gameroom(randomGameCode, (new Date()).getTime(), [firstPlayerName]) ;
+  let newGameroom = new Gameroom(randomGameCode, (new Date()).getTime(), [firstPlayer]) ;
   mapOfCurrentlyUsedGamerooms.set(randomGameCode, newGameroom) ;
   saveMapOfCurrentlyUsedGamerooms() ;
   return newGameroom ;
@@ -65,11 +65,10 @@ const createNewGameroom = (firstPlayerName)=>{
 
 
 
-//TODO make sure you check that max only 2 people are joined in a room
-const addUserToChatroom = (gameCode, newUserName, )=>{
+const addUserToChatroom = (gameCode, newPlayer, )=>{
   //firstly check if chatroom is not null
   if(mapOfCurrentlyUsedGamerooms.get(gameCode) == null) {
-    console.log(`Err : You tried to add the user ${newUserName} to game ${gameCode}, but no such gameCode exists `) ;
+    console.log(`Err : You tried to add the user ${newPlayer.name} to game ${gameCode}, but no such gameCode exists `) ;
     return 'GAMECODE_INVALID' ; // chatroom does not exist
   }
 
@@ -79,9 +78,21 @@ const addUserToChatroom = (gameCode, newUserName, )=>{
     return 'USER_LIMIT_REACHED' ;
   }
 
-  mapOfCurrentlyUsedGamerooms.get(gameCode).addPlayer(newUserName) ;
+  mapOfCurrentlyUsedGamerooms.get(gameCode).addPlayer(newPlayer) ;
   saveMapOfCurrentlyUsedGamerooms() ;
   return mapOfCurrentlyUsedGamerooms.get(gameCode) ;
+} ;
+
+
+const deleteUserFromGameroom = (gameCode, socketId)=>{
+  let gameRoom = mapOfCurrentlyUsedGamerooms.get(gameCode) ;
+  gameRoom.removePlayer(socketId) ;
+
+  if(gameRoom.players.length == 0){
+    mapOfCurrentlyUsedGamerooms.delete(gameCode) ;
+  }
+
+  saveMapOfCurrentlyUsedGamerooms() ;
 } ;
 
 
@@ -90,5 +101,6 @@ const addUserToChatroom = (gameCode, newUserName, )=>{
 module.exports = {
   initMapOfCurrentlyUsedGamerooms,
   createNewGameroom,
-  addUserToChatroom
+  addUserToChatroom,
+  deleteUserFromGameroom
 } ;

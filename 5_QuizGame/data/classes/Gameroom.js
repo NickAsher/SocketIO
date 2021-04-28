@@ -10,11 +10,12 @@ class Gameroom{
     this.players.push(player) ;
   }
 
-  removePlayer(playerToRemove){
-    return this.players.filter((player)=>{
+  removePlayer(playerToRemove_SocketId){
+    this.players = this.players.filter((user)=>{
       // elements that return positive boolean remain in the new array
-      return player != playerToRemove ;
+      return user.socketId != playerToRemove_SocketId ;
     }) ;
+
   }
 
   toJSON(){
