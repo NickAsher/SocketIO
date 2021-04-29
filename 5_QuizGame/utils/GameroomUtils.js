@@ -12,6 +12,7 @@ const getGameroom = (gameCode) =>{
 const initMapOfCurrentlyUsedGamerooms = ()=>{
   mapOfCurrentlyUsedGamerooms = new Map() ;
 
+
   try {
     const dataBuffer = fs.readFileSync(__dirname + './../data/fake_db/gameroom_data.json') ;
     const dataJSON = dataBuffer.toString() ;
@@ -165,7 +166,7 @@ const updateRoundScore = (gameCode, questionNo)=>{
       p2CurrentScore ++ ;
     }
 
-  } else if(p1CurrentScore && (p1Timestamp < p2Timestamp)){
+  } else if(is_p1Correct && (p1Timestamp < p2Timestamp)){
     p1CurrentScore ++ ;
   } else if(is_p2Correct && (p2Timestamp < p1Timestamp)){
     p2CurrentScore ++ ;
