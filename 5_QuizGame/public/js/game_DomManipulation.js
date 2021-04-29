@@ -39,7 +39,7 @@ $('#btn_RequestGameCode').click(()=> {
 
 function onNewGameRequested(gameCode){
   localStorage.setItem('currentGameCode', gameCode) ;
-  localStorage.setItem('playerNo', 1) ;
+  localStorage.setItem('playerNo', 'p1') ;
   document.querySelector('#input_InviteGameCode').value = gameCode ;
   $('#modal_ShowGameCode').modal('show') ;
 }
@@ -62,7 +62,7 @@ $('#btn_JoinGame').click(()=>{
 
 function onGameJoined(gameCode, listOfQuestions){
   localStorage.setItem('currentGameCode', gameCode) ;
-  localStorage.setItem('playerNo', 2) ;
+  localStorage.setItem('playerNo', 'p2') ;
   showOriginalModal = false ;
   startGame(listOfQuestions) ;
 }
@@ -116,6 +116,9 @@ function showQuestion(questionNo){
 
 function readyNextRound(){
   setTimeout(()=>{
+    if(currentQuestion == 6){
+      return ;
+    }
     currentQuestion++ ;
     showQuestion(currentQuestion) ;
   }, 500) ;
@@ -161,27 +164,46 @@ $('.my-answer-option').click((event)=>{
 }) ;
 
 
-function onServerResponse_QuestionClicked(data){
-  let mySelectedOption = data.mySelectedOption ;
-  let player2SelectedOption = data.player2SelectedOption ;
-
-  let correctOption = data.correctOption ;
 
 
-  //highlight my selected option
-  // highlight player2Selected option
+function onAnswerGivenByBothPlayers(data){
+  let p1SelectedOption = data.p1_selected_option ;
+  let p2SelectedOption = data.p2_selected_option ;
+  let correctOption = data.correct_option ;
+  let p1Score = data.p1_score ;
+  let p2Score = data.p2_score ;
 
-  //highlight correctoption by green colour
-  $(`.my-answer-option[data-option='${correctOption}']`)
-    .css({'background-image' : "url(images/question_rounded_green.png)" }) ;
 
-  let whoAnsweredFirst = data.whoAnsweredFirst ;
+  // color other player selected option with blue colour
+  if(localStorage.getItem('playerNo') == 'p1'){
+    $(`.my-answer-option[data-option='${p2SelectedOption}']`)
+      .css({'background-image' : "url(images/question_rounded_blue.png)" }) ;
+  }else if(localStorage.getItem('playerNo') == 'p2'){
+    $(`.my-answer-option[data-option='${p1SelectedOption}']`)
+      .css({'background-image' : "url(images/question_rounded_blue.png)" }) ;
+  }
 
-  let myNewScore = data.MyNewScore ;
-  let player2NewScore = data.player2NewScore ;
 
-  //update the scores.
+  setTimeout(()=>{
+    $(`.my-answer-option[data-option='${correctOption}']`)
+      .css({'background-image' : "url(images/question_rounded_green.png)" }) ;
 
-  readyNextRound() ;
+    if(p1SelectedOption != correctOption){
+      $(`.my-answer-option[data-option='${p1SelectedOption}']`)
+        .css({'background-image' : "url(images/question_rounded_red.png)" }) ;
+    }
+    if(p2SelectedOption != correctOption){
+      $(`.my-answer-option[data-option='${p2SelectedOption}']`)
+        .css({'background-image' : "url(images/question_rounded_red.png)" }) ;
+    }
+
+    $('#div_Player1Score').text(p1Score) ;
+    $('#div_Player2Score').text(p2Score) ;
+    readyNextRound() ;
+  }, 500) ;
+
+
 }
+
+
 

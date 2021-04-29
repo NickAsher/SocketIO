@@ -1,23 +1,28 @@
 class Gameroom{
 
-  constructor(gameCode, creationTime, players=[] ){
+  constructor(gameCode, creationTime, players={} ){
     this.gameCode = gameCode;
     this.creationTime = creationTime ;
     this.players = players ;
     this.gameData = {'0': {}, '1' : {}, '2' : {}, '3' : {}, '4' : {}, '5' : {}, '6' : {}} ;
   }
 
-  addPlayer(player){
-    this.players.push(player) ;
+
+  setPlayer(playerNo, playerObj){
+    this.players[playerNo] = playerObj ;
   }
 
-  removePlayer(playerToRemove_SocketId){
-    this.players = this.players.filter((user)=>{
-      // elements that return positive boolean remain in the new array
-      return user.socketId != playerToRemove_SocketId ;
-    }) ;
-
+  deletePlayer(playerSocketId){
+    if(this.players.p1 != null && this.players.p1.socketId == playerSocketId){
+      delete this.players.p1 ;
+    }else if(this.players.p2 != null && this.players.p2.socketId == playerSocketId){
+      delete this.players.p2 ;
+    }
   }
+
+
+
+
 
 
   setupGameData(answerArray){
@@ -42,17 +47,27 @@ class Gameroom{
 
 
 
-  addRoundScore(roundNo, playerNo, selectedOption){
-    let timestamp = new Date().getTime() ;
-    if(playerNo == '1'){
+  addRoundScore(roundNo, playerNo, selectedOption, timestamp){
+    if(playerNo == 'p1'){
       this.gameData['' + roundNo]['p1_timestamp'] = timestamp ;
       this.gameData['' + roundNo]['p1_selected_option'] = selectedOption ;
-    }else{
+    }else if(playerNo == 'p2'){
       this.gameData['' + roundNo]['p2_timestamp'] = timestamp ;
       this.gameData['' + roundNo]['p2_selected_option'] = selectedOption ;
     }
-
   }
+
+  calculateRoundScores(roundNo){
+    //firstly update the scores if the player answer is correct
+
+
+
+
+    // add the remaining 1 point for correct answer and answering first
+  }
+
+
+
 
 
   toJSON(){

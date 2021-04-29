@@ -31,9 +31,10 @@ const initMapOfCurrentlyUsedGamerooms = ()=>{
 } ;
 
 const saveMapOfCurrentlyUsedGamerooms = ()=>{
-  console.log("Saving the list of used chatrooms ") ;
+  console.log("Saving map of currently used gamerooms") ;
   let jsonObject = {};
   for(const [key,value] of mapOfCurrentlyUsedGamerooms.entries()){
+    console.log(key) ;
     jsonObject[key] = value.toJSON() ;
   }
   fs.writeFileSync(__dirname + './../data/fake_db/gameroom_data.json', JSON.stringify(jsonObject)) ;
@@ -63,7 +64,7 @@ const createRandomGameCode=()=>{
 
 const createNewGameroom = (firstPlayer)=>{
   let randomGameCode = createRandomGameCode() ;
-  let newGameroom = new Gameroom(randomGameCode, (new Date()).getTime(), [firstPlayer]) ;
+  let newGameroom = new Gameroom(randomGameCode, (new Date()).getTime(), {p1 : firstPlayer}) ;
   mapOfCurrentlyUsedGamerooms.set(randomGameCode, newGameroom) ;
   saveMapOfCurrentlyUsedGamerooms() ;
   return newGameroom ;
@@ -71,20 +72,21 @@ const createNewGameroom = (firstPlayer)=>{
 
 
 
-const addUserToChatroom = (gameCode, newPlayer, )=>{
+const addSecondPlayerToGameroom = (gameCode, newPlayer, )=>{
   //firstly check if chatroom is not null
-  if(mapOfCurrentlyUsedGamerooms.get(gameCode) == null) {
+  let gameroom = mapOfCurrentlyUsedGamerooms.get(gameCode) ;
+  if(gameroom == null) {
     console.log(`Err : You tried to add the user ${newPlayer.name} to game ${gameCode}, but no such gameCode exists `) ;
     return 'GAMECODE_INVALID' ; // chatroom does not exist
   }
 
-  if(mapOfCurrentlyUsedGamerooms.get(gameCode).players.length >= 2){
-    // there are already 2 or more users in the game.
+  if(gameroom.players.p1  != null  && gameroom.players.p2 != null){
+    // there are already 2  users in the game.
     console.log(`Err : Max User limit reached. Can't add more players to game ${gameCode}`) ;
     return 'USER_LIMIT_REACHED' ;
   }
 
-  mapOfCurrentlyUsedGamerooms.get(gameCode).addPlayer(newPlayer) ;
+  mapOfCurrentlyUsedGamerooms.get(gameCode).setPlayer('p2',  newPlayer) ;
   saveMapOfCurrentlyUsedGamerooms() ;
   return mapOfCurrentlyUsedGamerooms.get(gameCode) ;
 } ;
@@ -92,9 +94,9 @@ const addUserToChatroom = (gameCode, newPlayer, )=>{
 
 const deleteUserFromGameroom = (gameCode, socketId)=>{
   let gameRoom = mapOfCurrentlyUsedGamerooms.get(gameCode) ;
-  gameRoom.removePlayer(socketId) ;
+  gameRoom.deletePlayer(socketId) ;
 
-  if(gameRoom.players.length == 0){
+  if(gameRoom.players.p1 == null && gameRoom.players.p2 == null){
     mapOfCurrentlyUsedGamerooms.delete(gameCode) ;
   }
 
@@ -110,19 +112,20 @@ const setupGameroomAnswers = (gameCode, listOfQuestions)=>{
 
     answerArray.push(questionJsonObject.correct_option) ;
   }) ;
-  console.log(answerArray) ;
+
   mapOfCurrentlyUsedGamerooms.get(gameCode).setupGameData(answerArray) ;
   saveMapOfCurrentlyUsedGamerooms() ;
 } ;
 
 
-const setup_AnswerGiven_byPlayer = (gameCode, questionNo, playerNo, selectedOption)=>{
-  mapOfCurrentlyUsedGamerooms.get(gameCode).addRoundScore(questionNo, playerNo, selectedOption) ;
+const setup_AnswerGiven_byPlayer = (gameCode, questionNo, playerNo, selectedOption, timestamp)=>{
+  mapOfCurrentlyUsedGamerooms.get(gameCode).addRoundScore(questionNo, playerNo, selectedOption, timestamp) ;
   saveMapOfCurrentlyUsedGamerooms() ;
+} ;
 
-  // check if both the players have answered the round or not, if both have answered then return 2, else return 1
+const isAnswerGivenByBothPlayers = (gameCode, questionNo)=>{
   if(mapOfCurrentlyUsedGamerooms.get(gameCode).gameData[questionNo]['p1_selected_option'] != null &&
-      mapOfCurrentlyUsedGamerooms.get(gameCode).gameData[questionNo]['p2_selected_option'] != null){
+    mapOfCurrentlyUsedGamerooms.get(gameCode).gameData[questionNo]['p2_selected_option'] != null){
     return 2 ;
   }else{
     return 1 ;
@@ -131,12 +134,75 @@ const setup_AnswerGiven_byPlayer = (gameCode, questionNo, playerNo, selectedOpti
 
 
 
+const updateRoundScore = (gameCode, questionNo)=>{
+  let gameroom = mapOfCurrentlyUsedGamerooms.get(gameCode) ;
+  let p1CurrentScore = gameroom.players.p1.score ;
+  let p2CurrentScore = gameroom.players.p2.score ;
+
+  let roundAnswerData = gameroom.gameData[questionNo] ;
+  let correctOption = roundAnswerData.correct_option ;
+  let p1SelectedOption = roundAnswerData.p1_selected_option ;
+  let p2SelectedOption = roundAnswerData.p2_selected_option ;
+  let p1Timestamp = roundAnswerData.p1_timestamp ;
+  let p2Timestamp = roundAnswerData.p2_timestamp ;
+
+  let is_p1Correct = p1SelectedOption == correctOption ;
+  let is_p2Correct = p2SelectedOption == correctOption ;
+
+  if(is_p1Correct){
+    p1CurrentScore = p1CurrentScore + 2 ;
+  }
+
+  if(is_p2Correct){
+    p2CurrentScore = p2CurrentScore + 2 ;
+  }
+
+
+  if(is_p1Correct && is_p2Correct){
+    if(p1Timestamp < p2Timestamp){
+      p1CurrentScore ++ ;
+    }else{
+      p2CurrentScore ++ ;
+    }
+
+  } else if(p1CurrentScore && (p1Timestamp < p2Timestamp)){
+    p1CurrentScore ++ ;
+  } else if(is_p2Correct && (p2Timestamp < p1Timestamp)){
+    p2CurrentScore ++ ;
+  }
+
+
+
+  if(!is_p1Correct && !is_p2Correct){
+    //(both are not correct, so don't give any extra marks)
+  }
+
+
+
+  mapOfCurrentlyUsedGamerooms.get(gameCode).players.p1.score = p1CurrentScore ;
+  mapOfCurrentlyUsedGamerooms.get(gameCode).players.p2.score = p2CurrentScore ;
+  saveMapOfCurrentlyUsedGamerooms() ;
+
+  return {
+    p1_selected_option : p1SelectedOption,
+    p2_selected_option : p2SelectedOption,
+    correct_option : correctOption,
+    p1_score : p1CurrentScore,
+    p2_score : p2CurrentScore
+  } ;
+
+} ;
+
+
+
 module.exports = {
   initMapOfCurrentlyUsedGamerooms,
   getGameroom,
   createNewGameroom,
-  addUserToChatroom,
+  addSecondPlayerToGameroom,
   deleteUserFromGameroom,
   setupGameroomAnswers,
-  setup_AnswerGiven_byPlayer
+  setup_AnswerGiven_byPlayer,
+  isAnswerGivenByBothPlayers,
+  updateRoundScore
 } ;

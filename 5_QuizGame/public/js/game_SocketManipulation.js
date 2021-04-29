@@ -60,8 +60,9 @@ function emitToServer_AnswerClicked(questionNo, selectedOption){
 
 
 socket.on('gS2C_gameRoundAnsweredByBoth', (data)=>{
-  //TODO compute who answered the correct answer, show the green answer, update DOM,
+  onAnswerGivenByBothPlayers(data) ;
   console.log(data) ;
+
 }) ;
 
 
