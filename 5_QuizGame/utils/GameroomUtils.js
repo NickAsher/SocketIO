@@ -13,29 +13,27 @@ const initMapOfCurrentlyUsedGamerooms = ()=>{
   mapOfCurrentlyUsedGamerooms = new Map() ;
 
 
-  try {
-    const dataBuffer = fs.readFileSync(__dirname + './../data/fake_db/gameroom_data.json') ;
-    const dataJSON = dataBuffer.toString() ;
-    let jsonObject =  JSON.parse(dataJSON) ;
-
-    for(const gamerooomKey in jsonObject){
-      let gameCode = jsonObject[gamerooomKey]['gameCode'];
-      let creationTime = jsonObject[gamerooomKey]['creationTime'] ;
-      let players = jsonObject[gamerooomKey]['players'] ;
-
-      mapOfCurrentlyUsedGamerooms.set(gamerooomKey, new Gameroom(gameCode, creationTime, players)) ;
-    }
-  } catch (e) {
-    console.log(e) ;
-    console.log("Cannot initialise mapOfCurrentlyUsedGamerooms") ;
-  }
+  // try {
+  //   const dataBuffer = fs.readFileSync(__dirname + './../data/fake_db/gameroom_data.json') ;
+  //   const dataJSON = dataBuffer.toString() ;
+  //   let jsonObject =  JSON.parse(dataJSON) ;
+  //
+  //   for(const gamerooomKey in jsonObject){
+  //     let gameCode = jsonObject[gamerooomKey]['gameCode'];
+  //     let creationTime = jsonObject[gamerooomKey]['creationTime'] ;
+  //     let players = jsonObject[gamerooomKey]['players'] ;
+  //
+  //     mapOfCurrentlyUsedGamerooms.set(gamerooomKey, new Gameroom(gameCode, creationTime, players)) ;
+  //   }
+  // } catch (e) {
+  //   console.log(e) ;
+  //   console.log("Cannot initialise mapOfCurrentlyUsedGamerooms") ;
+  // }
 } ;
 
 const saveMapOfCurrentlyUsedGamerooms = ()=>{
-  console.log("Saving map of currently used gamerooms") ;
   let jsonObject = {};
   for(const [key,value] of mapOfCurrentlyUsedGamerooms.entries()){
-    console.log(key) ;
     jsonObject[key] = value.toJSON() ;
   }
   fs.writeFileSync(__dirname + './../data/fake_db/gameroom_data.json', JSON.stringify(jsonObject)) ;
@@ -47,10 +45,10 @@ const createRandomGameCode=()=>{
   let characters = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz123456789';
   let charactersLength = characters.length;  //58
   for ( let i = 0; i < 6; i++ ) {
-    //Math.random =                 => returns a decimal number between 0 & 1         like  0.454689
-    // Math.random() * 58           =>   any decimal number between 0 & 57.99         like  0.454689 * 58 = 26.371
-    // Math.floor(5.6764)= 5        => so it returns an integer number between 0 & 57    like floor(26.371) = 26
     result.push(characters.charAt(Math.floor(Math.random() * charactersLength)));
+    // Math.random =                => returns a decimal number between 0 & 1             like  0.454689
+    // Math.random() * 58           => any decimal number between 0 & 57.99               like  0.454689 * 58 = 26.371
+    // Math.floor(5.6764)= 5        => so it returns an integer number between 0 & 57     like floor(26.371) = 26
   }
   let randomGameCode =  result.join('');
 

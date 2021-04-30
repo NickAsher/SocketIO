@@ -40,6 +40,7 @@ $('#btn_RequestGameCode').click(()=> {
 function onNewGameRequested(gameCode){
   localStorage.setItem('currentGameCode', gameCode) ;
   localStorage.setItem('playerNo', 'p1') ;
+  $('#div_Player1Name').append(' (You)') ;
   document.querySelector('#input_InviteGameCode').value = gameCode ;
   $('#modal_ShowGameCode').modal('show') ;
 }
@@ -63,6 +64,7 @@ $('#btn_JoinGame').click(()=>{
 function onGameJoined(gameCode, listOfQuestions){
   localStorage.setItem('currentGameCode', gameCode) ;
   localStorage.setItem('playerNo', 'p2') ;
+  $('#div_Player2Name').append(' (You)') ;
   showOriginalModal = false ;
   startGame(listOfQuestions) ;
 }
@@ -104,6 +106,8 @@ function startGame(listOfQuestions){
 function showQuestion(questionNo){
   //reset all answer backgrounds
   $('.my-answer-option').css({'background-image' : "url(images/question_rounded_darkwine.png)" }) ;
+  $('.my-badge-left').remove() ;
+  $('.my-badge-right').remove() ;
   let question = arrayOfQuestions[questionNo] ;
 
   $('#div_QuestionStatement h4').text(question.question_statement) ;
@@ -127,40 +131,23 @@ function readyNextRound(){
 
 
 $('.my-answer-option').click((event)=>{
-
   let element = event.currentTarget ;
   let optionClicked = $(element).attr('data-option') ;
-
-  //TODO emit the click event to server
-
 
   //making the selected option yellow
   $(element).css({'background-image' : "url(images/question_rounded_yellow.png)" }) ;
 
-
+  //adding a badge indicating that we selected this answer
+  let myName = localStorage.getItem('playerNo') == 'p1' ? 'Player-1' : 'Player-2' ;
+  $(element).parent().append(`<span class="badge badge-pill badge-dark my-badge-left">${myName}</span>`) ;
 
   let correctOption = arrayOfQuestions[currentQuestion].correct_option ;
   let isAnswerCorrect = optionClicked == correctOption ? true : false ;
 
+  // TODO make the buttons unclickable now
 
   emitToServer_AnswerClicked(currentQuestion, optionClicked) ;
 
-  // making the correct option green
-  // setTimeout(()=>{
-  //
-  //   $(`.my-answer-option[data-option='${correctOption}']`)
-  //     .css({'background-image' : "url(images/question_rounded_green.png)" }) ;
-  //
-  //   if(optionClicked == correctOption){
-  //     myScore = myScore + 2 ;
-  //     $('#div_YourScore').text(myScore) ;
-  //   }else{
-  //     $(element).css({'background-image' : "url(images/question_rounded_red.png)" }) ;
-  //   }
-  //   //TODO emit the score to server?? maybe
-  //   readyNextRound() ;
-  //
-  // }, 500) ;
 }) ;
 
 
@@ -176,11 +163,17 @@ function onAnswerGivenByBothPlayers(data){
 
   // color other player selected option with blue colour
   if(localStorage.getItem('playerNo') == 'p1'){
-    $(`.my-answer-option[data-option='${p2SelectedOption}']`)
-      .css({'background-image' : "url(images/question_rounded_blue.png)" }) ;
+
+    let p2SelectedElement = $(`.my-answer-option[data-option='${p2SelectedOption}']`) ;
+    p2SelectedElement.parent().append(`<span class="badge badge-pill badge-dark my-badge-right">Player-2</span>`) ;
+    p2SelectedElement.css({'background-image' : "url(images/question_rounded_yellow.png)" }) ;
+
   }else if(localStorage.getItem('playerNo') == 'p2'){
-    $(`.my-answer-option[data-option='${p1SelectedOption}']`)
-      .css({'background-image' : "url(images/question_rounded_blue.png)" }) ;
+
+    let p1SelectedElement = $(`.my-answer-option[data-option='${p1SelectedOption}']`) ;
+    p1SelectedElement.parent().append(`<span class="badge badge-pill badge-dark my-badge-right">Player-1</span>`) ;
+    p1SelectedElement.css({'background-image' : "url(images/question_rounded_yellow.png)" }) ;
+
   }
 
 

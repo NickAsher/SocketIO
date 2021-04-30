@@ -118,25 +118,20 @@ io.on('connect', (socket, req)=>{
     let timestamp = new Date().getTime() ;
 
     GameroomUtils.setup_AnswerGiven_byPlayer(gameCode, questionNo, playerNo, selectedOption, timestamp) ;
-    let gameRoom = GameroomUtils.getGameroom(gameCode) ;
 
-    let bothPlayerHaveAnswered = GameroomUtils.isAnswerGivenByBothPlayers(gameCode, questionNo) ;
+    let prettyTime = new Date(timestamp).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second : 'numeric', hour12: true }) ;
+    let msg = `Player ${playerNo} has answered Question No ${questionNo} at ${prettyTime}` ;
+    io.sockets.in(gameCode).emit('gS2C_gameRoundAnswered', {
+      msg : msg
+    }) ;
 
-    if(bothPlayerHaveAnswered == 2){
 
+    if(GameroomUtils.isAnswerGivenByBothPlayers(gameCode, questionNo) == 2){
       let roundData = GameroomUtils.updateRoundScore(gameCode, questionNo) ;
       io.sockets.in(gameCode).emit('gS2C_gameRoundAnsweredByBoth', roundData) ;
-    }else{
-      let prettyTime = new Date(timestamp).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second : 'numeric', hour12: true }) ;
-      let msg = `Player ${playerNo} has answered Question No ${questionNo} at ${prettyTime}` ;
-      io.sockets.in(gameCode).emit('gS2C_gameRoundAnswered', {
-        msg : msg
-      }) ;
-      console.log(msg) ;
     }
 
 
-    //TODO inform other players that this player has answered this round
 
   }) ;
 

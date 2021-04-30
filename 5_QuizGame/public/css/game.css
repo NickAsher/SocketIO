@@ -42,4 +42,20 @@ body {
   vertical-align: middle;
 }
 
+.my-badge-left {
+  position: relative;
+  padding: 5px;
+  margin-top: -17%;
+  margin-left: 15%;
+  z-index: 20;
+}
+
+.my-badge-right {
+  position: relative;
+  padding: 5px;
+  margin-top: -17%;
+  margin-left: 70%;
+  z-index: 20;
+}
+
 /*# sourceMappingURL=game.css.map */
