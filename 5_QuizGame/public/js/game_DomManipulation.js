@@ -116,7 +116,14 @@ function onUserDisconnected(){
   $('#modal_UserDisconnected').modal('show') ;
   let showOriginalModal = false ;
 
+  $('#progressBar_Player2').removeClass('bg-success') ;
+  $('#progressBar_Player2').addClass('bg-danger') ;
+
 }
+
+$('#btn_playerDisconnected').click(()=>{
+  window.location.reload();
+}) ;
 
 
 

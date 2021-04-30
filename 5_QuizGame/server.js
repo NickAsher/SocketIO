@@ -104,7 +104,6 @@ io.on('connect', (socket, req)=>{
       return ;
     }
 
-
     GameroomUtils.deleteGameroom(gameCode, socket.id) ;
     io.sockets.in(gameCode).emit('userDisconnected') ;
 
@@ -112,11 +111,6 @@ io.on('connect', (socket, req)=>{
     for(let singleSocket of roomSockets){
       singleSocket.leave(gameCode) ;
     }
-
-
-
-
-
   }) ;
 
 
