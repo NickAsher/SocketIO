@@ -144,7 +144,7 @@ function startGame(listOfQuestions){
 
 }
 
-
+let answerSelected = false ;
 function showQuestion(questionNo){
   //reset all answer backgrounds
   $('.my-answer-option').css({'background-image' : "url(images/question_rounded_darkwine.png)" }) ;
@@ -157,6 +157,23 @@ function showQuestion(questionNo){
   $('#div_AnswerOptionB h5').text(question.option_b) ;
   $('#div_AnswerOptionC h5').text(question.option_c) ;
   $('#div_AnswerOptionD h5').text(question.option_d) ;
+
+  answerSelected = false ;
+
+  setClock() ;
+}
+
+let clockTimer ;
+function setClock(){
+  let sec = 30;
+  clockTimer = setInterval(function(){
+    document.getElementById('clock').innerHTML= sec;
+    sec--;
+    if (sec < 0) {
+      onNoAnswerSelectedIn30Seconds() ;
+      clearInterval(clockTimer);
+    }
+  }, 1000);
 }
 
 
@@ -174,6 +191,14 @@ function readyNextRound(){
 
 
 $('.my-answer-option').click((event)=>{
+  if(answerSelected){
+    // to stop player from selecting multiple answers
+    return ;
+  }
+  answerSelected = true ;
+  clearInterval(clockTimer) ;
+  document.getElementById('clock').innerHTML = '--' ;
+
   let element = event.currentTarget ;
   let optionClicked = $(element).attr('data-option') ;
 
@@ -184,15 +209,19 @@ $('.my-answer-option').click((event)=>{
   let myName = localStorage.getItem('playerNo') == 'p1' ? 'Player-1' : 'Player-2' ;
   $(element).parent().append(`<span class="badge badge-pill badge-dark my-badge-left">${myName}</span>`) ;
 
-  let correctOption = arrayOfQuestions[currentQuestion].correct_option ;
-  let isAnswerCorrect = optionClicked == correctOption ? true : false ;
 
-  // TODO make the buttons unclickable now
 
   emitToServer_AnswerClicked(currentQuestion, optionClicked) ;
 
 }) ;
 
+
+function onNoAnswerSelectedIn30Seconds(){
+  // make a toast that you didn't select an answer
+  $('#div_ToastNoOptionSelected').toast('show') ;
+  answerSelected = true ; //disables the clicking of answer buttons
+  emitToServer_AnswerClicked(currentQuestion, '0') ;
+}
 
 
 

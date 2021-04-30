@@ -58,4 +58,16 @@ body {
   z-index: 20;
 }
 
+.my-clock-container {
+  width: 60px;
+  height: 60px;
+  border-width: 5px !important;
+  border-color: #FFE8A2;
+  font-size: 32px;
+  color: #fff;
+  display: block;
+  position: relative;
+  margin-left: 48%;
+}
+
 /*# sourceMappingURL=game.css.map */
