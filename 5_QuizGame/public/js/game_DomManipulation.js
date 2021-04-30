@@ -113,15 +113,21 @@ function showErrorToUser(errorMsg){
 
 
 function onUserDisconnected(){
+  let myScore, opponentScore ;
+  if(localStorage.getItem('playerNo') == 'p1'){
+    myScore = $('#div_Player1Score').text() ;
+    opponentScore = $('#div_Player2Score').text() ;
+  }else{
+    myScore = $('#div_Player2Score').text() ;
+    opponentScore = $('#div_Player1Score').text() ;
+  }
+  $('#h5_DisconnectScore').text(`Your score is ${myScore} & your opponent Score is ${opponentScore}`) ;
+
+
   $('#modal_UserDisconnected').modal('show') ;
-  let showOriginalModal = false ;
-
-  $('#progressBar_Player2').removeClass('bg-success') ;
-  $('#progressBar_Player2').addClass('bg-danger') ;
-
 }
 
-$('#btn_playerDisconnected').click(()=>{
+$('#btn_playerDisconnected, #btn_GameEnded').click(()=>{
   window.location.reload();
 }) ;
 
@@ -157,6 +163,7 @@ function showQuestion(questionNo){
 function readyNextRound(){
   setTimeout(()=>{
     if(currentQuestion == 6){
+      onGameEnded() ;
       return ;
     }
     currentQuestion++ ;
@@ -235,4 +242,18 @@ function onAnswerGivenByBothPlayers(data){
 }
 
 
+function onGameEnded(){
+  let myScore, opponentScore ;
+  if(localStorage.getItem('playerNo') == 'p1'){
+    myScore = $('#div_Player1Score').text() ;
+    opponentScore = $('#div_Player2Score').text() ;
+  }else{
+    myScore = $('#div_Player2Score').text() ;
+    opponentScore = $('#div_Player1Score').text() ;
+  }
+  $('#h5_GameEndedScore').text(`Your score is ${myScore} & your opponent Score is ${opponentScore}`) ;
+
+
+  $('#modal_EndGame').modal('show') ;
+}
 

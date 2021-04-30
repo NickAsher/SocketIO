@@ -104,7 +104,7 @@ io.on('connect', (socket, req)=>{
       return ;
     }
 
-    GameroomUtils.deleteGameroom(gameCode, socket.id) ;
+    GameroomUtils.deleteGameroom(gameCode) ;
     io.sockets.in(gameCode).emit('userDisconnected') ;
 
     const roomSockets = await io.of("/").in(gameCode).fetchSockets();
@@ -116,7 +116,7 @@ io.on('connect', (socket, req)=>{
 
 
 
-  socket.on('gC2S_gameRoundAnswered', (data)=>{
+  socket.on('gC2S_gameRoundAnswered', async (data)=>{
     let gameCode = socket.room ;
     let questionNo = data.questionNo ;
     let playerNo = data.playerNo ;
@@ -135,6 +135,16 @@ io.on('connect', (socket, req)=>{
     if(GameroomUtils.isAnswerGivenByBothPlayers(gameCode, questionNo) == 2){
       let roundData = GameroomUtils.updateRoundScore(gameCode, questionNo) ;
       io.sockets.in(gameCode).emit('gS2C_gameRoundAnsweredByBoth', roundData) ;
+
+
+      if(questionNo == 6){
+        // Game has ended, so delete the gameroom
+        GameroomUtils.deleteGameroom(gameCode) ;
+        const roomSockets = await io.of("/").in(gameCode).fetchSockets();
+        for(let singleSocket of roomSockets){
+          singleSocket.leave(gameCode) ;
+        }
+      }
     }
 
 

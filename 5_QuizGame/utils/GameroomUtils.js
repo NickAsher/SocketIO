@@ -91,7 +91,7 @@ const addSecondPlayerToGameroom = (gameCode, newPlayer, )=>{
 } ;
 
 
-const deleteGameroom = (gameCode, socketId)=>{
+const deleteGameroom = (gameCode)=>{
   mapOfCurrentlyUsedGamerooms.delete(gameCode) ;
   saveMapOfCurrentlyUsedGamerooms() ;
 } ;
