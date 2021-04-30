@@ -47,6 +47,11 @@ socket.on('S2C_Error', (data)=>{
   showErrorToUser(data.e) ;
 }) ;
 
+socket.on('userDisconnected', (data)=>{
+  onUserDisconnected() ;
+  // socket.disconnect() ; // since other user disconnected, game's over, so force disconnect
+}) ;
+
 
 
 function emitToServer_AnswerClicked(questionNo, selectedOption){

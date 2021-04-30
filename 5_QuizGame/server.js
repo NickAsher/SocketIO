@@ -51,7 +51,7 @@ io.on('connect', (socket, req)=>{
   }) ;
 
 
-  socket.on('C2S_JoinGame', (data, acknowledgement)=>{
+  socket.on('C2S_JoinGame', async (data, acknowledgement)=>{
     acknowledgement(true) ;
 
     let newUser = {name : data.sender, socketId : socket.id, score : 0} ;
@@ -73,7 +73,7 @@ io.on('connect', (socket, req)=>{
     console.log(`${socket.id} (${data.sender}) has joined the gameCode ${gameroom.gameCode}`) ;
 
 
-    //TODO send the list of 7 question here
+    //TODO send the list of 7 real random questions here
     let listOfQuestions = get7RandomQuestions() ;
     GameroomUtils.setupGameroomAnswers(gameroom.gameCode, listOfQuestions) ;
 
@@ -90,21 +90,33 @@ io.on('connect', (socket, req)=>{
     }) ;
 
 
+
+
   }) ;
 
 
 
-  socket.on('disconnect', (data)=>{
+  socket.on('disconnect', async (data)=>{
+    console.log("Disconnecr is called for " + socket.id) ;
     let gameCode = socket.room ;
     console.log(`The ${socket.id} is disconnecting `) ;
     if(gameCode == null){
       return ;
     }
 
-    //TODO delete the whole gameroom on quit
-    GameroomUtils.deleteUserFromGameroom(gameCode, socket.id) ;
 
-    //TODO send some kind of event to let the other player know that the user has disconnected & end the game
+    GameroomUtils.deleteGameroom(gameCode, socket.id) ;
+    io.sockets.in(gameCode).emit('userDisconnected') ;
+
+    const roomSockets = await io.of("/").in(gameCode).fetchSockets();
+    for(let singleSocket of roomSockets){
+      singleSocket.leave(gameCode) ;
+    }
+
+
+
+
+
   }) ;
 
 

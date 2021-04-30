@@ -91,14 +91,8 @@ const addSecondPlayerToGameroom = (gameCode, newPlayer, )=>{
 } ;
 
 
-const deleteUserFromGameroom = (gameCode, socketId)=>{
-  let gameRoom = mapOfCurrentlyUsedGamerooms.get(gameCode) ;
-  gameRoom.deletePlayer(socketId) ;
-
-  if(gameRoom.players.p1 == null && gameRoom.players.p2 == null){
-    mapOfCurrentlyUsedGamerooms.delete(gameCode) ;
-  }
-
+const deleteGameroom = (gameCode, socketId)=>{
+  mapOfCurrentlyUsedGamerooms.delete(gameCode) ;
   saveMapOfCurrentlyUsedGamerooms() ;
 } ;
 
@@ -199,7 +193,7 @@ module.exports = {
   getGameroom,
   createNewGameroom,
   addSecondPlayerToGameroom,
-  deleteUserFromGameroom,
+  deleteGameroom,
   setupGameroomAnswers,
   setup_AnswerGiven_byPlayer,
   isAnswerGivenByBothPlayers,

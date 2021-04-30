@@ -24,6 +24,28 @@ $('#modal_ShowGameCode').on('hidden.bs.modal', function () {
 }) ;
 
 
+document.querySelector("#input_InviteGameCode").addEventListener("click", function(){
+  let element = document.querySelector('#input_InviteGameCode') ;
+
+  element.select(); /* Select the text field */
+  element.setSelectionRange(0, 99999); /* For mobile devices */
+
+  /* Copy the text inside the text field */
+  document.execCommand("copy");
+  return false;
+}, false);
+
+
+
+document.querySelector("#input_JoinGameCode").addEventListener("click", async function(){
+  const clipboardText = await navigator.clipboard.readText();
+  document.querySelector("#input_JoinGameCode").value = clipboardText ;
+  return false;
+}, false);
+
+
+
+
 localStorage.setItem('currentGameCode', '-1') ;
 localStorage.setItem('playerNo', '-1') ;
 let arrayOfQuestions = [] ;
@@ -32,6 +54,7 @@ let myScore = 0 ;
 
 
 $('#btn_RequestGameCode').click(()=> {
+  console.log("invite is clicked") ;
   emitToServer_RequestNewGame(()=>{
     //TODO maybe show some kind of loading bar here
   }) ;
@@ -43,6 +66,8 @@ function onNewGameRequested(gameCode){
   $('#div_Player1Name').append(' (You)') ;
   document.querySelector('#input_InviteGameCode').value = gameCode ;
   $('#modal_ShowGameCode').modal('show') ;
+
+
 }
 
 
@@ -87,7 +112,11 @@ function showErrorToUser(errorMsg){
 }
 
 
-//TODO tell the other user that user has disconnected
+function onUserDisconnected(){
+  $('#modal_UserDisconnected').modal('show') ;
+  let showOriginalModal = false ;
+
+}
 
 
 
