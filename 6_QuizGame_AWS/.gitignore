@@ -1,0 +1,9 @@
+.env
+.idea/
+node_modules/
+package-lock.json
+data/fake_db/gameroom_data.json
+secret/
+/secret/
+
+/logs/

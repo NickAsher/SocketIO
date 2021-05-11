@@ -1,8 +1,10 @@
 const express = require('express') ;
 const socketio = require('socket.io') ;
+const MongoDB = require('mongodb') ;
+const fs = require('fs') ;
 const GameroomUtils = require('./utils/GameroomUtils') ;
 
-
+const MongoClient = MongoDB.MongoClient ;
 
 const app = express() ;
 
@@ -14,11 +16,36 @@ const expressServer = app.listen(4001, ()=>{
   console.log("Server is listening on port 4001") ;
 }) ;
 
-
 const io = socketio(expressServer, {
   cors: {origin: 'http://localhost:4001',}, // allow your webserver address here
   methods: ["GET", "POST"]
 }) ;
+
+
+let mongoConnectionURL = 'mongodb://127.0.0.1:27017' ;
+let databaseName = 'kbc' ;
+MongoClient.connect(mongoConnectionURL, (err, client)=>{
+  if(err){
+    return console.log("There was an error in connecting to your client") ;
+  }
+  console.log("Successfully connected to the mongo db") ;
+  const db = client.db(databaseName) ;
+
+
+
+
+  db.collection('movie').updateMany(
+    {},
+    { $set : {
+        isMovieGood : true
+    }
+    }, (err, result)=>{}
+  );
+
+}) ;
+
+
+
 
 GameroomUtils.initMapOfCurrentlyUsedGamerooms() ;
 
