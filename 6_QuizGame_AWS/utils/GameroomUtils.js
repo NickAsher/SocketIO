@@ -1,5 +1,6 @@
 const Gameroom = require('../data/classes/Gameroom') ;
 const fs = require('fs') ;
+require('dotenv').config() ;
 
 
 let mapOfCurrentlyUsedGamerooms ;
@@ -11,38 +12,24 @@ const getGameroom = (gameCode) =>{
 
 const initMapOfCurrentlyUsedGamerooms = ()=>{
   mapOfCurrentlyUsedGamerooms = new Map() ;
-
-
-  // try {
-  //   const dataBuffer = fs.readFileSync(__dirname + './../data/fake_db/gameroom_data.json') ;
-  //   const dataJSON = dataBuffer.toString() ;
-  //   let jsonObject =  JSON.parse(dataJSON) ;
-  //
-  //   for(const gamerooomKey in jsonObject){
-  //     let gameCode = jsonObject[gamerooomKey]['gameCode'];
-  //     let creationTime = jsonObject[gamerooomKey]['creationTime'] ;
-  //     let players = jsonObject[gamerooomKey]['players'] ;
-  //
-  //     mapOfCurrentlyUsedGamerooms.set(gamerooomKey, new Gameroom(gameCode, creationTime, players)) ;
-  //   }
-  // } catch (e) {
-  //   console.log(e) ;
-  //   console.log("Cannot initialise mapOfCurrentlyUsedGamerooms") ;
-  // }
 } ;
 
 const saveMapOfCurrentlyUsedGamerooms = ()=>{
-  let jsonObject = {};
-  for(const [key,value] of mapOfCurrentlyUsedGamerooms.entries()){
-    jsonObject[key] = value.toJSON() ;
+  if(process.env.NODE_ENV == 'development'){
+    let jsonObject = {};
+    for(const [key,value] of mapOfCurrentlyUsedGamerooms.entries()){
+      jsonObject[key] = value.toJSON() ;
+    }
+    fs.writeFileSync(__dirname + './../data/fake_db/gameroom_data.json', JSON.stringify(jsonObject)) ;
+
   }
-  fs.writeFileSync(__dirname + './../data/fake_db/gameroom_data.json', JSON.stringify(jsonObject)) ;
+
 } ;
 
 
 const createRandomGameCode=()=>{
   let result = [];
-  let characters = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz123456789';
+  let characters = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz123456789';    // Base58 : removed I O l 0
   let charactersLength = characters.length;  //58
   for ( let i = 0; i < 6; i++ ) {
     result.push(characters.charAt(Math.floor(Math.random() * charactersLength)));

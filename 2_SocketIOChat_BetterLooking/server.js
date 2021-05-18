@@ -13,7 +13,7 @@ const expressServer = app.listen(4001, ()=>{
 
 
 const io = socketio(expressServer, {
-  cors: {origin: 'http://localhost:4001',}, // allow your webserver address here
+  cors: {origin: '*',}, // allow your webserver address here
   methods: ["GET", "POST"]
 }) ;
 

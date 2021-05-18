@@ -4,10 +4,12 @@
 const fs = require('fs') ;
 const AWS = require('aws-sdk') ;
 
-AWS.config.update({
-  region: "ap-south-1",
-  endpoint: "http://localhost:8000"
-}) ;
+// AWS.config.update({
+//   region: "ap-south-1",
+//   endpoint: "http://localhost:8000"
+// }) ;
+
+AWS.config.loadFromPath('./../../secret/aws_credentials.json');
 
 let docClient = new AWS.DynamoDB.DocumentClient() ;
 let questionsArray = JSON.parse(fs.readFileSync(__dirname + './../fake_db/question_table.json')) ;

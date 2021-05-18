@@ -117,6 +117,13 @@ function onGameJoined(gameCode, listOfQuestions){
   startGame(listOfQuestions) ;
   is2ndPlayerJoined = true ;
 
+  //sometimes the original modal i.e. $('#modal_Opening') is still shown at this time
+  // this happens because in production there is delay when user2 Clicks Join game (C2S_JoinGame),
+  // and server responds with S2C_NewGameJoined
+  // so within this delay, the $('#modal_Opening') comes back up when user2 clicks join game.
+  // so we specifically trigger a hide operation
+  $('#modal_Opening').modal('hide') ;
+
 }
 
 
