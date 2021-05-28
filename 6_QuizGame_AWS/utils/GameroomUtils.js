@@ -20,7 +20,7 @@ const saveMapOfCurrentlyUsedGamerooms = ()=>{
     for(const [key,value] of mapOfCurrentlyUsedGamerooms.entries()){
       jsonObject[key] = value.toJSON() ;
     }
-    fs.writeFileSync(__dirname + './../data/fake_db/gameroom_data.json', JSON.stringify(jsonObject)) ;
+    fs.writeFileSync(__dirname + '/../data/fake_db/gameroom_data.json', JSON.stringify(jsonObject)) ;
 
   }
 

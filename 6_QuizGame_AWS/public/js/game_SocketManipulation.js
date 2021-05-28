@@ -1,4 +1,4 @@
-const socket = io('http://localhost:4001') ;
+const socket = io('https://www.inquiz.rafique.in') ;
 
 
 function emitToServer_RequestNewGame(DOMCallbackFunction){

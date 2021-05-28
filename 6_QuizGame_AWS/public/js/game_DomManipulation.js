@@ -11,7 +11,9 @@ $(window).on('load', ()=>{
 
 //show the original modal when user closes the joinGame modal, but doesn't actually join the game
 $('#modal_JoinNewGame').on('hidden.bs.modal', function () {
+  console.log("modal_JoinNewGame has been hiddden") ;
   if(showOriginalModal){
+    console.log("showing the #modal_Opening because modal_JoinNewGame is hidden and showOriginalModal is still true ") ;
     $('#modal_Opening').modal('show') ;
   }
 }) ;
@@ -38,9 +40,10 @@ document.querySelector("#input_InviteGameCode").addEventListener("click", functi
 
 
 document.querySelector("#input_JoinGameCode").addEventListener("click", async function(){
-  const clipboardText = await navigator.clipboard.readText();
-  document.querySelector("#input_JoinGameCode").value = clipboardText ;
-  return false;
+  // have removed this function, because if the clipboard input is empty, this gives errors
+  // const clipboardText = await navigator.clipboard.readText();
+  // document.querySelector("#input_JoinGameCode").value = clipboardText ;
+  // return false;
 }, false);
 
 
@@ -114,6 +117,7 @@ function onGameJoined(gameCode, listOfQuestions){
   localStorage.setItem('playerNo', 'p2') ;
   $('#div_Player2Name').append(' (You)') ;
   showOriginalModal = false ;
+  $('#modal_JoinNewGame').modal('hide') ;
   startGame(listOfQuestions) ;
   is2ndPlayerJoined = true ;
 
@@ -146,6 +150,7 @@ function showErrorToUser(errorMsg){
 
 
 function onUserDisconnected(){
+  //TODO make this disconnect modal uncancellable when mouse is clicked outside the main area
   let myScore, opponentScore ;
   if(localStorage.getItem('playerNo') == 'p1'){
     myScore = $('#div_Player1Score').text() ;
@@ -266,7 +271,7 @@ function onAnswerGivenByBothPlayers(data){
   let p2Score = data.p2_score ;
 
 
-  // color other player selected option with blue colour
+  // color other player selected option with yellow colour and show badge pill
   if(localStorage.getItem('playerNo') == 'p1'){
 
     let p2SelectedElement = $(`.my-answer-option[data-option='${p2SelectedOption}']`) ;
