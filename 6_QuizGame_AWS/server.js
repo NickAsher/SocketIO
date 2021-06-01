@@ -45,7 +45,7 @@ io.on('connect', (socket, req)=>{
 
     console.log(`${socket.id} (${data.sender}) has joined the gameCode ${newGameroom.gameCode}`) ;
 
-    socket.emit('S2C_NewGameStarted', {
+    socket.emit('S2C_NewGameRequested', {
       gameroom : newGameroom
     }) ;
 
@@ -57,7 +57,7 @@ io.on('connect', (socket, req)=>{
   }) ;
 
 
-  socket.on('C2S_JoinGame', async (data, acknowledgement)=>{
+  socket.on('C2S_RequestJoinGame', async (data, acknowledgement)=>{
     acknowledgement(true) ;
 
     let newUser = {name : data.sender, socketId : socket.id, score : 0} ;

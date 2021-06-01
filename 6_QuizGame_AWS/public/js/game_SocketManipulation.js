@@ -11,7 +11,7 @@ function emitToServer_RequestNewGame(DOMCallbackFunction){
   });
 }
 
-socket.on('S2C_NewGameStarted', (data)=>{
+socket.on('S2C_NewGameRequested', (data)=>{
   let gameCode = data.gameroom.gameCode ;
   console.log("Gamecode is " + gameCode) ;
   onNewGameRequested(gameCode) ;
@@ -25,7 +25,7 @@ function emitToServer_2ndPlayerNotConnectedIn3Min(){
 
 
 function emitToServer_JoinGame(gameCode, DOMCallbackFunction){
-  socket.emit('C2S_JoinGame', {
+  socket.emit('C2S_RequestJoinGame', {
     gameCode : gameCode,
     sender : localStorage.getItem('senderName')
   }, (serverAcknowledgement)=>{
