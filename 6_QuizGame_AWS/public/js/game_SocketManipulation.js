@@ -1,4 +1,7 @@
-const socket = io('https://www.inquiz.rafique.in') ;
+const socket = io('https://www.inquiz.rafique.in', {
+  withCredentials: true,
+  transports: ['websocket']
+}) ;
 
 
 function emitToServer_RequestNewGame(DOMCallbackFunction){
@@ -55,7 +58,8 @@ socket.on('S2C_Error', (data)=>{
 
 socket.on('userDisconnected', (data)=>{
   onUserDisconnected() ;
-  // socket.disconnect() ; // since other user disconnected, game's over, so force disconnect
+
+  socket.disconnect() ; // since other user disconnected, game's over, so force disconnect
 }) ;
 
 

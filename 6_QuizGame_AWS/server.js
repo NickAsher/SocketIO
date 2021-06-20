@@ -15,8 +15,11 @@ const expressServer = app.listen(4001, ()=>{
 }) ;
 
 const io = socketio(expressServer, {
-  cors: {origin: '*',}, // allow your webserver address here
-  methods: ["GET", "POST"]
+  cors: {
+    origin: "https://www.inquiz.rafique.in", // allow your webserver address here
+    methods: ["GET", "POST"],
+    credentials : true
+  }
 }) ;
 
 

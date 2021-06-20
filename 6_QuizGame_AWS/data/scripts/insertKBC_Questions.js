@@ -9,7 +9,7 @@ const AWS = require('aws-sdk') ;
 //   endpoint: "http://localhost:8000"
 // }) ;
 
-AWS.config.loadFromPath('./../../secret/aws_credentials.json');
+AWS.config.loadFromPath('./../../secret/aws_credentials_developer_shampy_ec2.json');
 
 let docClient = new AWS.DynamoDB.DocumentClient() ;
 let questionsArray = JSON.parse(fs.readFileSync(__dirname + './../fake_db/question_table.json')) ;
@@ -38,6 +38,7 @@ questionsArray.forEach((question)=>{
 
 
   }) ;
+
 
 
 }) ;

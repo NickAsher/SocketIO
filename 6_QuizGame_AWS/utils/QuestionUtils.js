@@ -1,7 +1,7 @@
 const fs = require('fs') ;
 const AWS = require('aws-sdk') ;
 
-AWS.config.loadFromPath(__dirname + '/../secret/aws_credentials.json');
+AWS.config.loadFromPath(__dirname + '/../secret/aws_credentials_developer_shampy_ec2.json');
 let docClient = new AWS.DynamoDB.DocumentClient() ;
 
 

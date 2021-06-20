@@ -151,6 +151,7 @@ function showErrorToUser(errorMsg){
 
 function onUserDisconnected(){
   //TODO make this disconnect modal uncancellable when mouse is clicked outside the main area
+  //TODO make the game clock stop and force stop the game
   let myScore, opponentScore ;
   if(localStorage.getItem('playerNo') == 'p1'){
     myScore = $('#div_Player1Score').text() ;
@@ -159,6 +160,7 @@ function onUserDisconnected(){
     myScore = $('#div_Player2Score').text() ;
     opponentScore = $('#div_Player1Score').text() ;
   }
+
   $('#h5_DisconnectScore').text(`Your score is ${myScore} & your opponent Score is ${opponentScore}`) ;
 
 
